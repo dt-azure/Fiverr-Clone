@@ -1,0 +1,77 @@
+$slides: 1, 2, 3, 4, 5;
+
+.embla {
+    overflow-x: hidden;
+    overflow-y: visible;
+}
+.embla__container {
+    display: flex;
+    padding: 10px 0;
+
+    .embla__slide {
+        flex: 0 0 20%;
+        min-width: 0;
+        padding-right: 10px;
+        padding-left: 2px;
+        // height: 100px;
+
+        .slide-item {
+            background-color: gray;
+        }
+    }
+
+    @each $slide in $slides {
+        &.slide-#{$slide} {
+            .embla__slide {
+                flex: 0 0 calc(100% / #{$slide});
+                min-width: 0;
+                padding-right: 10px;
+                padding-left: 2px;
+                // height: 100px;
+
+                .slide-item {
+                    background-color: gray;
+                }
+            }
+        }
+    }
+
+    &.single-carousel {
+        .embla__slide {
+            flex: 0 0 100%;
+            min-width: 0;
+            padding-right: 10px;
+            padding-left: 2px;
+            // height: 100px;
+
+            .slide-item {
+                background-color: gray;
+            }
+        }
+    }
+}
+
+.carousel-nav {
+    background-color: white;
+    border-radius: 50%;
+    box-shadow:
+        0 1.2px 1.92251px rgba(0, 0, 0, 0.02),
+        0 2px 3.68135px rgba(0, 0, 0, 0.04),
+        0 1px 5px rgba(0, 0, 0, 0.05);
+    height: 45px;
+    width: 45px;
+}
+
+.prev-btn {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%) translateX(-40px);
+}
+
+.next-btn {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%) translateX(30px);
+}

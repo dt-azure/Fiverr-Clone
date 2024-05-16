@@ -1,0 +1,14 @@
+.ant-popover {
+    --antd-arrow-background-color: rgb(64, 65, 69);
+    z-index: 99;
+
+    .ant-popover-content {
+        transform: translateY(0);
+
+        #pro-label {
+            padding: 10px;
+            background: rgb(64, 65, 69);
+            max-width: 250px;
+        }
+    }
+}

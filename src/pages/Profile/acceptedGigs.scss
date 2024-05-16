@@ -1,0 +1,29 @@
+@import "../../utils/variables.scss";
+
+.gig-empty {
+    padding: 95px 0 120px;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    background: #fff;
+    height: fit-content;
+
+    h3 {
+        margin: 48px 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: $color-dark-2;
+    }
+
+    button {
+        background: $primary-color;
+        color: #fff;
+
+        &:hover {
+            background: $primary-color-dark;
+        }
+    }
+}
+
+.gig-container {
+    width: 736px;
+}

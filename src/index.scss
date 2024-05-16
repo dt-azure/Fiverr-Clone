@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+a {
+  text-decoration: none;
+
+  &:hover {
+    color: black;
+  }
+}
+
+.main-container {
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+.video-wrapper {
+  position: relative;
+  cursor: pointer;
+  img {
+    border-radius: 4px;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: url(https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/desktop-play-button.bab1740.png)
+      no-repeat;
+    background-size: 80px;
+    height: 80px;
+    width: 80px;
+  }
+}
+
+.ant-popover {
+  z-index: 1000 !important;
+}

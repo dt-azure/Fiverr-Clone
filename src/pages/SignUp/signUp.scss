@@ -1,0 +1,29 @@
+.signUp-container {
+    min-height: 100vh;
+    
+
+    .ant-input-affix-wrapper {
+        display: flex;
+    }
+
+    .animation_signUp {
+        height: 100vh;
+        
+    }
+
+    .form_signUp {
+        padding-top: 64px;
+        .ant-picker.ant-picker-outlined {
+            width: 100%;
+            padding: 0.625em;
+
+        }
+
+        .ant-select.ant-select-outlined {
+            width: 100%;
+            min-height: 41px;
+
+        }
+    }
+
+}

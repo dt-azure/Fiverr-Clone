@@ -1,0 +1,45 @@
+@import "../../utils/variables.scss";
+
+.embla__slide {
+    a:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+}
+
+.thumbnail {
+    cursor: pointer;
+}
+
+.name {
+    color: $color-dark;
+    .carousel__card-avatar {
+        max-width: 25px;
+        margin-right: 10px;
+        border-radius: 50%;
+    }
+}
+
+.rating {
+    color: $color-dark-2;
+    span {
+        font-size: 16px;
+        line-height: 24px;
+    }
+    .rating-count {
+        color: $color-grey-2;
+    }
+}
+
+.fee {
+    color: $color-dark-2
+}
+
+.like {
+    top: 15px;
+    right: 25px;
+    background-image: url(https://fiverr-res.cloudinary.com/npm-assets/@fiverr/logged_out_homepage_perseus/hearts.e6208a0.svg);
+    width: 34px;
+    height: 32px;
+    cursor: pointer;
+}
