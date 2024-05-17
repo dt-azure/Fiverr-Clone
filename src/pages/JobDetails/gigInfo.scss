@@ -143,6 +143,12 @@
                         }
                     }
 
+                    .placeholder-avatar {
+                        margin-right: 15px;
+                        width: 50px;
+                        height: 50px;
+                    }
+
                     h3 {
                         font-weight: 700;
                     }
@@ -169,11 +175,9 @@
             }
 
             .comments-input {
-                img {
-                    max-height: 50px;
-                    max-width: 50px;
-                    object-fit: cover;
-                    border-radius: 50%;
+                .placeholder-avatar {
+                    height: 50px;
+                    width: 50px;
                 }
 
                 .text-field {
@@ -186,6 +190,10 @@
                         &:hover {
                             opacity: 0.85;
                         }
+                    }
+
+                    .ant-rate {
+                        margin-bottom: 24px;
                     }
                 }
             }
@@ -410,4 +418,11 @@
     font-size: 20px;
     line-height: 28px;
     margin-bottom: 24px;
+}
+
+.placeholder-avatar {
+    border-radius: 50%;
+    background: url(../../assets/default-avatar.png);
+    background-position: center;
+    background-size: cover;
 }

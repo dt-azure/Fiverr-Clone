@@ -299,6 +299,9 @@ const SignUp = () => {
                   Update
                 </button>
               )} */}
+              
+              <span className=" text-black cursor-pointer signIn-redirect" onClick={() => { navigate("/sign-in") }}>Already had an account? Click here to sign in.</span>
+
               <button
                 type="submit"
                 className="bg-black text-white rounded-md py-2 w-full"

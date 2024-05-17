@@ -1,3 +1,5 @@
+@import "../../utils//variables.scss";
+
 .signUp-container {
     min-height: 100vh;
     
@@ -26,4 +28,14 @@
         }
     }
 
+    .signIn-redirect {
+        display: inline-block;
+        margin-bottom: 12px;
+        font-size: 14px;
+
+        &:hover {
+            text-decoration: underline;
+            color: $color-blue;
+        }
+    }
 }

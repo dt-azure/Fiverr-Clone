@@ -13,4 +13,7 @@ export const manageCommentServ = {
   updateComment: (commentId, body) => {
     return http_access.put(`/binh-luan/${commentId}`, body);
   },
+  postComment: (body) => {
+    return http_access.post(`/binh-luan`, body);
+  },
 };

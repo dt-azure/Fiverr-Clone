@@ -90,11 +90,11 @@ const SignIn = () => {
   if (!userLocal) {
     return (
       <div className="signIn-container flex items-center">
-        <div className="animation_signIn w-0 md:w-6/12 flex items-center lg:translate-x-20">
+        <div className="animation_signIn w-0 md:w-5/12 flex items-center lg:translate-x-20">
           <Lottie options={defaultOptions} height={400} width={400} />
         </div>
-        <div className="form_signIn w-full md:w-6/12 flex flex-col items-center md:items-start justify-center ml-0 lg:ml-20">
-          <div className="p-10 border border-gray-400 rounded-md space-y-5">
+        <div className="form_signIn w-full md:w-7/12 flex flex-col items-center md:items-start justify-center ml-0 lg:ml-20">
+          <div className="form-wrapper p-10 border border-gray-400 rounded-md space-y-5">
             <h1 className="font-bold text-2xl">Sign In</h1>
             <form onSubmit={handleSubmit} className="space-y-5">
               <InputCustom
@@ -123,7 +123,8 @@ const SignIn = () => {
                 labelClassName="w-1/2"
               />
 
-              <div>
+              <div className="flex flex-col">
+              <span className=" text-black cursor-pointer signUp-redirect" onClick={() => { navigate("/sign-up") }}>Don't have an account? Click here to sign up.</span>
                 <button
                   type="submit"
                   className="bg-black text-white rounded-md py-2 w-full"

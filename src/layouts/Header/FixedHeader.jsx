@@ -114,7 +114,7 @@ const FixedHeader = () => {
                     trigger="click"
                     content={
                       <ul>
-                        <li>Profile</li>
+                        <li onClick={() => { navigate(`/profile/${userLocal.data.content.user.id}`) }}>Profile</li>
                         <li>Post a Request</li>
                         <li className="highlight">Refer a Friend</li>
                         <li className="divider"></li>

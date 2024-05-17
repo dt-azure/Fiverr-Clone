@@ -17,7 +17,7 @@ export const removeLocalStorage = (key) => {
 
 export const formatDate = (date) => {
   const newDate = new Date(date);
-  console.log(newDate)
+
   if (isNaN(newDate)) {
     return date;
   }

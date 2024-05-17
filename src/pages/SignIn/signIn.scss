@@ -1,7 +1,26 @@
+@import "../../utils//variables.scss";
+
 .signIn-container {
     min-height: 100vh;
 
     .ant-input-affix-wrapper {
         display: flex;
+    }
+
+    .form_signIn {
+        .form-wrapper {
+            min-width: 500px;
+        }
+    }
+
+    .signUp-redirect {
+        display: inline-block;
+        margin-bottom: 12px;
+        font-size: 14px;
+
+        &:hover {
+            text-decoration: underline;
+            color: $color-blue;
+        }
     }
 }

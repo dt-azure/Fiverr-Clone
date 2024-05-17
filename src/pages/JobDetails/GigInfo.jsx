@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import "./gigInfo.scss";
 import { Collapse, Rate, Tabs } from "antd";
 import BasicButton from "../../components/Button/BasicButton";
-import TextArea from "antd/es/input/TextArea";
 import Comments from "./Comments";
 
+
 const GigInfo = ({ gigDetails }) => {
+
+
+
   const tabItem = (
     <div className="package-details">
       <div className="flex justify-between items-center">
@@ -157,18 +160,7 @@ const GigInfo = ({ gigDetails }) => {
           {/* <div className="comments">Text</div> */}
           <Comments />
 
-          <div className="comments-input flex gap-2">
-            <div className="user-avatar">
-              <img
-                src="https://fiverr-res.cloudinary.com/image/upload/t_profile_original,q_auto,f_auto/v1/attachments/profile/photo/129c0b6148f0a2bcb3ad82a3639d58de-1649589210201/80745c5a-8c7d-4ca1-a5d6-fbfb9a04a857.jpg"
-                alt=""
-              />
-            </div>
-            <div className="text-field w-full">
-              <TextArea rows={4} />
-              <BasicButton text="Add Comment" />
-            </div>
-          </div>
+          
         </div>
       </div>
       <div className="side-bar">

@@ -10,6 +10,7 @@ import {
   handleLoadingOff,
   handleLoadingOn,
 } from "../../redux/slice/loadingSlice";
+import { ToastContainer } from "react-toastify";
 
 const JobDetails = () => {
   const { isLoading } = useSelector((state) => state.loadingSlice);
@@ -67,6 +68,17 @@ const JobDetails = () => {
       <FixedHeader />
       {isLoading ? <Loading /> : <GigInfo gigDetails={gigDetails} />}
       {/* <GigInfo /> */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Footer />
     </>
   );
