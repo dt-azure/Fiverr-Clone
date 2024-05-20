@@ -19,7 +19,7 @@ export const manageGigServ = {
     return http_access.post(`/cong-viec`, body);
   },
   updateGigPhoto: (gigId, body) => {
-    return http_access.post(`/cong-viec/upload-hinh-cong-viec/${gigId}`, body)
+    return http_access.post(`/cong-viec/upload-hinh-cong-viec/${gigId}`, body);
   },
   getOrderDataWithPagination: (pageIndex = "", pageSize = "", keyword = "") => {
     let apiParam = formatPaginationParams(pageIndex, pageSize, keyword);
@@ -27,13 +27,13 @@ export const manageGigServ = {
     return http.get(`/thue-cong-viec/phan-trang-tim-kiem?${apiParam}`);
   },
   deleteOrder: (orderId) => {
-    return http_access.delete(`/thue-cong-viec/${orderId}`)
+    return http_access.delete(`/thue-cong-viec/${orderId}`);
   },
   updateOrder: (orderId, body) => {
-    return http_access.put(`thue-cong-viec/${orderId}`, body)
+    return http_access.put(`thue-cong-viec/${orderId}`, body);
   },
   addOrder: (body) => {
-    return http_access.post(`thue-cong-viec`, body)
+    return http_access.post(`thue-cong-viec`, body);
   },
   getGigCategoryWithPagination: (
     pageIndex = "",
@@ -70,5 +70,8 @@ export const manageGigServ = {
   },
   addGigSubcategory: (body) => {
     return http_access.post(`/loai-cong-viec`, body);
+  },
+  getMenuItems: () => {
+    return http.get(`/cong-viec/lay-menu-loai-cong-viec`);
   },
 };

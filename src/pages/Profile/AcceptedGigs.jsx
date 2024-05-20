@@ -4,6 +4,7 @@ import BasicButton from "../../components/Button/BasicButton";
 
 const AcceptedGigs = () => {
   const [gigList, setGigList] = useState(null);
+  
 
   return (
     <div className="gig-container gig-empty text-center flex flex-col items-center justify-center">
@@ -173,7 +174,7 @@ const AcceptedGigs = () => {
         ></path>
       </svg>
       <h3>Ready to earn on your own terms?</h3>
-      <BasicButton text="Become a seller" />
+      <BasicButton text="Become a seller"/>
     </div>
   );
 };

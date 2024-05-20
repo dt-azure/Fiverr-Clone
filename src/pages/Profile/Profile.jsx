@@ -4,6 +4,7 @@ import Footer from "../../layouts/Footer/Footer";
 import "./profile.scss";
 import ProfileDetails from "./ProfileDetails";
 import AcceptedGigs from "./AcceptedGigs";
+import { ToastContainer } from "react-toastify";
 
 const Profile = () => {
   return (
@@ -15,6 +16,18 @@ const Profile = () => {
           <AcceptedGigs />
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+
       <Footer />
     </>
   );

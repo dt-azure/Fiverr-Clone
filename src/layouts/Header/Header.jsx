@@ -7,12 +7,14 @@ import "./header.scss";
 import Search from "antd/es/input/Search";
 import { getLocalStorage, removeLocalStorage } from "../../utils/util";
 import { useNavigate } from "react-router-dom";
+import { manageGigServ } from "../../services/manageGig";
 
 const Header = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
+  const [menuItems, setMenuItems] = useState([]);
   const userLocal = getLocalStorage("user");
   const avatar = userLocal ? userLocal.data.content.user.avatar : null;
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleToggleMenu = (id) => {
     document
@@ -39,6 +41,16 @@ const Header = () => {
     window.location.reload();
   };
 
+  const handleGetMenuItems = async () => {
+    try {
+      const res = await manageGigServ.getMenuItems();
+      setMenuItems(res.data.content);
+      console.log(res.data.content);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   window.addEventListener("scroll", handleToggleHeader);
 
   useEffect(() => {
@@ -52,6 +64,8 @@ const Header = () => {
     if (window.scrollY > 100) {
       document.querySelector(".home__navbar").classList.add("scrolled");
     }
+
+    handleGetMenuItems();
 
     return () => {
       window.removeEventListener("scroll", handleToggleHeader);
@@ -148,7 +162,15 @@ const Header = () => {
                     trigger="click"
                     content={
                       <ul>
-                        <li onClick={() => { navigate(`/profile/${userLocal.data.content.user.id}`) }}>Profile</li>
+                        <li
+                          onClick={() => {
+                            navigate(
+                              `/profile/${userLocal.data.content.user.id}`
+                            );
+                          }}
+                        >
+                          Profile
+                        </li>
                         <li>Post a Request</li>
                         <li className="highlight">Refer a Friend</li>
                         <li className="divider"></li>
@@ -234,53 +256,33 @@ const Header = () => {
               </li>
               <li className="cursor-pointer">English</li>
               <li className="cursor-pointer">Become a Seller</li>
-              <li className="cursor-pointer" onClick={() => {navigate("/sign-in")}}>Sign In</li>
-              <li className="cursor-pointer py-2 px-4 join-btn" onClick={() => { navigate("/sign-up")}}>Join</li>
+              <li
+                className="cursor-pointer"
+                onClick={() => {
+                  navigate("/sign-in");
+                }}
+              >
+                Sign In
+              </li>
+              <li
+                className="cursor-pointer py-2 px-4 join-btn"
+                onClick={() => {
+                  navigate("/sign-up");
+                }}
+              >
+                Join
+              </li>
             </ul>
           </nav>
         )}
       </div>
-      <div className="categories-menu px-24 py-2">
-        <ul className="flex items-center justify-between">
-          <li>
-            <a href="/">Graphics & Design</a>
-          </li>
-
-          <li>
-            <a href="/">Programming & Tech</a>
-          </li>
-
-          <li>
-            <a href="/">Digital Marketing</a>
-          </li>
-
-          <li>
-            <a href="/">Video & Animation</a>
-          </li>
-
-          <li>
-            <a href="/">Writing & Translation</a>
-          </li>
-
-          <li>
-            <a href="/">Music & Audio</a>
-          </li>
-
-          <li>
-            <a href="/">Business</a>
-          </li>
-
-          <li>
-            <a href="/">Consulting</a>
-          </li>
-
-          <li>
-            <a href="/">Data</a>
-          </li>
-
-          <li>
-            <a href="/">AI Services</a>
-          </li>
+      <div className="categories-menu px-1">
+        <ul className="flex">
+          {menuItems.map((item) => (
+            <li>
+              <a href="/">{item.tenLoaiCongViec}</a>
+            </li>
+          ))}
         </ul>
       </div>
     </header>

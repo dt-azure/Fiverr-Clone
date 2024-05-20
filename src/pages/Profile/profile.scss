@@ -241,3 +241,22 @@
         }
     }
 }
+
+.profile-modal-wrapper {
+    padding: 24px;
+
+    .modal-item {
+        margin-bottom: 20px;
+    }
+
+    .avatar-container {
+
+        height: 300px;
+        overflow: hidden;
+        margin-bottom: 20px;
+
+        img {
+            height: 100%;
+        }
+    }
+}

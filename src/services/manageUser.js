@@ -25,6 +25,6 @@ export const manageUserServ = {
     return http.put(`/users/${userId}`, body);
   },
   updateAvatar: (body) => {
-    return http_access.put(`/users/upload-avatar`, body);
+    return http_access.post(`/users/upload-avatar`, body);
   },
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "animate.css";
 import { Popover } from "antd";
 import { exploreText, fiverrProText } from "./headerText";
@@ -6,11 +6,14 @@ import "./header.scss";
 import Search from "antd/es/input/Search";
 import { getLocalStorage, removeLocalStorage } from "../../utils/util";
 import { useNavigate } from "react-router-dom";
+import { manageGigServ } from "../../services/manageGig";
 
 const FixedHeader = () => {
   const userLocal = getLocalStorage("user");
   const avatar = userLocal ? userLocal.data.content.user.avatar : null;
   const navigate = useNavigate();
+  const urlCheck = new RegExp("(profile)");
+  const [menuItems, setMenuItems] = useState([]);
 
   const handleToggleMenu = (id) => {
     document
@@ -20,13 +23,36 @@ const FixedHeader = () => {
 
   const handleLogOut = () => {
     removeLocalStorage("user");
-    window.location.reload();
+    if (urlCheck.test(window.location)) {
+      navigate("/");
+    } else {
+      window.location.reload();
+    }
   };
+
+  const handleGetMenuItems = async () => {
+    try {
+      const res = await manageGigServ.getMenuItems();
+      setMenuItems(res.data.content);
+      console.log(res.data.content);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    handleGetMenuItems();
+  }, []);
 
   return (
     <header className="home__navbar fixed">
       <div className="navbar__container flex justify-between items-center text-white px-24 pt-4 pb-6">
-        <div className="navbar__logo">
+        <div
+          className="navbar__logo cursor-pointer"
+          onClick={() => {
+            navigate("/");
+          }}
+        >
           <svg
             width="89"
             height="27"
@@ -114,7 +140,15 @@ const FixedHeader = () => {
                     trigger="click"
                     content={
                       <ul>
-                        <li onClick={() => { navigate(`/profile/${userLocal.data.content.user.id}`) }}>Profile</li>
+                        <li
+                          onClick={() => {
+                            navigate(
+                              `/profile/${userLocal.data.content.user.id}`
+                            );
+                          }}
+                        >
+                          Profile
+                        </li>
                         <li>Post a Request</li>
                         <li className="highlight">Refer a Friend</li>
                         <li className="divider"></li>
@@ -220,47 +254,13 @@ const FixedHeader = () => {
           </nav>
         )}
       </div>
-      <div className="categories-menu px-24 py-2">
-        <ul className="flex items-center justify-between">
-          <li>
-            <a href="/">Graphics & Design</a>
-          </li>
-
-          <li>
-            <a href="/">Programming & Tech</a>
-          </li>
-
-          <li>
-            <a href="/">Digital Marketing</a>
-          </li>
-
-          <li>
-            <a href="/">Video & Animation</a>
-          </li>
-
-          <li>
-            <a href="/">Writing & Translation</a>
-          </li>
-
-          <li>
-            <a href="/">Music & Audio</a>
-          </li>
-
-          <li>
-            <a href="/">Business</a>
-          </li>
-
-          <li>
-            <a href="/">Consulting</a>
-          </li>
-
-          <li>
-            <a href="/">Data</a>
-          </li>
-
-          <li>
-            <a href="/">AI Services</a>
-          </li>
+      <div className="categories-menu px-1">
+        <ul className="flex">
+          {menuItems.map((item) => (
+            <li>
+              <a href="/">{item.tenLoaiCongViec}</a>
+            </li>
+          ))}
         </ul>
       </div>
     </header>
