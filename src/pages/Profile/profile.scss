@@ -291,11 +291,21 @@
 
     .avatar-container {
         height: 300px;
+        width: 300px;
         overflow: hidden;
         margin-bottom: 20px;
+        border-radius: 50%;
+        
 
         img {
             height: 100%;
+            width: 100%;
+            object-fit: cover;
         }
+    }
+
+    .placeholder-avatar {
+        height: 300px;
+        width: 300px;
     }
 }

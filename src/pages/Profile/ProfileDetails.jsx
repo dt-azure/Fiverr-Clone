@@ -152,7 +152,6 @@ const ProfileDetails = () => {
     switch (inputId) {
       case "cert":
         if (values.certification != "") {
-          console.log(values.certification);
           newProfile.certification.push(values.certification);
         } else {
           return;
@@ -492,7 +491,7 @@ const ProfileDetails = () => {
       {/* Avatar upload modal */}
       <Modal open={modalOpen} footer={null} onCancel={handleCancel}>
         <div className="profile-modal-wrapper">
-          <div className="modal-item">
+          <div className="modal-item flex flex-col items-center">
             <div className="avatar-container flex items-center justify-center">
               {currentAvatar.url == "" ? (
                 profile.avatar == "" ? (
