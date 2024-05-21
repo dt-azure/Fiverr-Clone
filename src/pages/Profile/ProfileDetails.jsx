@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import BasicButton from "../../components/Button/BasicButton";
-import { Button, Modal, Popover } from "antd";
+import { Button, Modal, Popover, ConfigProvider, Input } from "antd";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
@@ -9,6 +9,8 @@ import {
 } from "../../redux/slice/loadingSlice";
 import { manageUserServ } from "../../services/manageUser";
 import { notifyErrBasic, notifySuccess } from "../../utils/util";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const ProfileDetails = () => {
   const { profileId } = useParams();
@@ -16,37 +18,76 @@ const ProfileDetails = () => {
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState(false);
   const [currentAvatar, setCurrentAvatar] = useState({ url: "", file: null });
+  const [inputToggle, setInputToggle] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(true);
 
-  const generateDescItem = (text) => {
+  const {
+    handleChange,
+    handleBlur,
+    values,
+    errors,
+    touched,
+    handleSubmit,
+    setValues,
+    setFieldValue,
+    setFieldError,
+    resetForm,
+  } = useFormik({
+    initialValues: {
+      skill: "",
+      certification: "",
+    },
+    onSubmit: async () => {},
+    validationSchema: Yup.object({
+      skill: Yup.string().required("Field is required."),
+      certification: Yup.string().required("Field is required."),
+    }),
+  });
+
+  const generateDescItem = (group, text) => {
     return (
       <div className="desc-item flex items-center gap-4">
         {text}
-        <Popover
-          content={
-            <div className="profile-popover">
-              <p>Edit</p>
-            </div>
-          }
-          trigger="hover"
-          id="profile-popover"
-        >
-          <Button>
-            <i class="fa-solid fa-pen"></i>
-          </Button>
-        </Popover>
-        <Popover
-          content={
-            <div className="profile-popover">
-              <p>Delete</p>
-            </div>
-          }
-          trigger="hover"
-          id="profile-popover"
-        >
-          <Button>
-            <i class="fa-solid fa-trash-can"></i>
-          </Button>
-        </Popover>
+
+        <ConfigProvider wave={{ disabled: true }}>
+          <Popover
+            content={
+              <div className="profile-popover">
+                <p>Edit</p>
+              </div>
+            }
+            trigger="hover"
+            id="profile-popover"
+          >
+            <Button
+              onClick={() => {
+                handleEditInfo(group, text);
+              }}
+            >
+              <i class="fa-solid fa-pen"></i>
+            </Button>
+          </Popover>
+        </ConfigProvider>
+
+        <ConfigProvider wave={{ disabled: true }}>
+          <Popover
+            content={
+              <div className="profile-popover">
+                <p>Delete</p>
+              </div>
+            }
+            trigger="hover"
+            id="profile-popover"
+          >
+            <Button
+              onClick={() => {
+                handleDeleteDescItem(group, text);
+              }}
+            >
+              <i className="fa-solid fa-trash-can"></i>
+            </Button>
+          </Popover>
+        </ConfigProvider>
       </div>
     );
   };
@@ -68,14 +109,19 @@ const ProfileDetails = () => {
     setCurrentAvatar({ url: avatarURL, file: e.target.files[0] });
   };
 
+  const handleCloseInput = (inputId) => {
+    document.getElementById(inputId).classList.remove("displayed");
+    resetForm();
+    setIsSubmit(true);
+  };
+
   const handleGetProfileData = async () => {
     try {
       dispatch(handleLoadingOn());
       const res = await manageUserServ.getUserDataById(profileId);
       setProfile(res.data.content);
-      // setCurrentAvatar(res.data.content.avatar);
     } catch (err) {
-      // notifyErrBasic();
+      console.log(err);
     } finally {
       dispatch(handleLoadingOff());
     }
@@ -98,6 +144,58 @@ const ProfileDetails = () => {
     } catch (err) {
       notifyErrBasic();
     }
+  };
+
+  const handleUpdateProfileDesc = async (inputId) => {
+    let newProfile = { ...profile };
+
+    switch (inputId) {
+      case "cert":
+        if (values.certification != "") {
+          console.log(values.certification);
+          newProfile.certification.push(values.certification);
+        } else {
+          return;
+        }
+
+        break;
+      case "skill":
+        if (values.skill != "") {
+          newProfile.skill.push(values.skill);
+        } else {
+          return;
+        }
+
+        break;
+    }
+
+    try {
+      await manageUserServ.updateUserInfo(profile.id, newProfile);
+      setProfile(newProfile);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      handleCloseInput(inputId);
+    }
+  };
+
+  const handleDeleteDescItem = async (group, item) => {
+    let index = profile[group].findIndex((i) => i === item);
+    let newInfo = { ...profile };
+    newInfo[group].splice(index, 1);
+
+    try {
+      await manageUserServ.updateUserInfo(profile.id, newInfo);
+      setProfile(newInfo);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleEditInfo = (group, item) => {
+    setFieldValue(group, item);
+    setIsSubmit(false);
+    document.getElementById("cert").classList.add("displayed");
   };
 
   useEffect(() => {
@@ -197,93 +295,198 @@ const ProfileDetails = () => {
           <BasicButton text="Enroll Now" className="enroll-btn" />
         </div>
 
-        <div className="bottom profile-section">
-          {/* Description */}
-          <div className="desc-wrapper">
-            <div className="desc-header flex items-center justify-between">
-              <h3>Description</h3>
-              <span className="add-btn">Edit Description</span>
+        <form onSubmit={handleSubmit}>
+          <div className="bottom profile-section">
+            {/* Description */}
+            <div className="desc-wrapper">
+              <div className="desc-header flex items-center justify-between">
+                <h3>Description</h3>
+                <span className="add-btn">Edit Description</span>
+              </div>
+
+              <div className="desc-details">
+                {profile.description ? (
+                  profile.description
+                ) : (
+                  <p className="placeholder">
+                    Please tell us about any hobbies, additional expertise, or
+                    anything else you'd like to add.
+                  </p>
+                )}
+              </div>
+
+              <div className="desc-input"></div>
             </div>
 
-            <div className="desc-details">
-              {profile.description ? profile.description : ""}
-            </div>
+            {/* Languages */}
+            <div className="desc-wrapper">
+              <div className="desc-header flex items-center justify-between">
+                <h3>Languages</h3>
+                <span className="add-btn">Add New</span>
+              </div>
 
-            <div className="desc-input"></div>
-          </div>
+              <div className="profile-input"></div>
 
-          {/* Languages */}
-          <div className="desc-wrapper">
-            <div className="desc-header flex items-center justify-between">
-              <h3>Languages</h3>
-              <span className="add-btn">Add New</span>
-            </div>
-
-            <div className="desc-details">
-              {profile.languages
-                ? profile.languages.map((item) => {
+              <div className="desc-details">
+                {profile.languages ? (
+                  profile.languages.map((item) => {
                     generateDescItem(item);
                   })
-                : ""}
+                ) : (
+                  <p className="placeholder">Add your Language.</p>
+                )}
+              </div>
+
+              <div className="desc-input"></div>
             </div>
 
-            <div className="desc-input"></div>
-          </div>
+            {/* Skills */}
+            <div className="desc-wrapper">
+              <div className="desc-header flex items-center justify-between">
+                <h3>Skills</h3>
+                <span
+                  className="add-btn"
+                  onClick={() => {
+                    document
+                      .querySelector("#skill.desc-input")
+                      .classList.add("displayed");
+                  }}
+                >
+                  Add New
+                </span>
+              </div>
 
-          {/* Skills */}
-          <div className="desc-wrapper">
-            <div className="desc-header flex items-center justify-between">
-              <h3>Skills</h3>
-              <span className="add-btn">Add New</span>
+              <div id="skill" className="desc-input">
+                <Input
+                  className="input-field"
+                  id="skill"
+                  name="skill"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.skill}
+                />
+                <div className="input-btn flex justify-between items-center">
+                  <BasicButton
+                    text="Cancel"
+                    className="w-1/2 mr-2 cancel-btn"
+                    onClick={() => {
+                      handleCloseInput("skill");
+                    }}
+                  />
+                  {isSubmit ? (
+                    <BasicButton
+                      text="Add"
+                      className="w-1/2 ml-2 add-btn"
+                      onClick={() => {
+                        handleUpdateProfileDesc("skill");
+                      }}
+                    />
+                  ) : (
+                    <BasicButton
+                      text="Update"
+                      className="w-1/2 ml-2 text-white bg-orange-500 hover:opacity-80"
+                      onClick={() => {
+                        handleUpdateProfileDesc("skill");
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="desc-details">
+                {profile && profile.skill.length != 0 ? (
+                  profile.skill.map((item) => generateDescItem("skill", item))
+                ) : (
+                  <p className="placeholder">Add your Skill.</p>
+                )}
+              </div>
             </div>
 
-            <div className="desc-details">
-              {profile.skill
-                ? profile.skill.map((item) => {
+            {/* Education */}
+            <div className="desc-wrapper">
+              <div className="desc-header flex items-center justify-between">
+                <h3>Education</h3>
+                <span className="add-btn">Add New</span>
+              </div>
+
+              <div className="desc-details">
+                {profile.education ? (
+                  profile.education.map((item) => {
                     generateDescItem(item);
                   })
-                : ""}
+                ) : (
+                  <p className="placeholder">Add your Education.</p>
+                )}
+              </div>
+
+              <div className="desc-input"></div>
             </div>
 
-            <div className="desc-input"></div>
+            {/* Certification */}
+            <div className="desc-wrapper">
+              <div className="desc-header flex items-center justify-between">
+                <h3>Certification</h3>
+                <span
+                  className="add-btn"
+                  onClick={() => {
+                    document
+                      .querySelector("#cert.desc-input")
+                      .classList.add("displayed");
+                  }}
+                >
+                  Add New
+                </span>
+              </div>
+
+              <div id="cert" className="desc-input">
+                <Input
+                  className="input-field"
+                  id="certification"
+                  name="certification"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.certification}
+                />
+                <div className="input-btn flex justify-between items-center">
+                  <BasicButton
+                    text="Cancel"
+                    className="w-1/2 mr-2 cancel-btn"
+                    onClick={() => {
+                      handleCloseInput("cert");
+                    }}
+                  />
+                  {isSubmit ? (
+                    <BasicButton
+                      text="Add"
+                      className="w-1/2 ml-2 add-btn"
+                      onClick={() => {
+                        handleUpdateProfileDesc("cert");
+                      }}
+                    />
+                  ) : (
+                    <BasicButton
+                      text="Update"
+                      className="w-1/2 ml-2 text-white bg-orange-500 hover:opacity-80"
+                      onClick={() => {
+                        handleUpdateProfileDesc("cert");
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="desc-details">
+                {profile && profile.certification.length != 0 ? (
+                  profile.certification.map((item) =>
+                    generateDescItem("certification", item)
+                  )
+                ) : (
+                  <p className="placeholder">Add your Certification.</p>
+                )}
+              </div>
+            </div>
           </div>
-
-          {/* Education */}
-          <div className="desc-wrapper">
-            <div className="desc-header flex items-center justify-between">
-              <h3>Education</h3>
-              <span className="add-btn">Add New</span>
-            </div>
-
-            <div className="desc-details">
-              {profile.education
-                ? profile.education.map((item) => {
-                    generateDescItem(item);
-                  })
-                : ""}
-            </div>
-
-            <div className="desc-input"></div>
-          </div>
-
-          {/* Certification */}
-          <div className="desc-wrapper">
-            <div className="desc-header flex items-center justify-between">
-              <h3>Certification</h3>
-              <span className="add-btn">Add New</span>
-            </div>
-
-            <div className="desc-details">
-              {profile.certification
-                ? profile.certification.map((item) => {
-                    generateDescItem(item);
-                  })
-                : ""}
-            </div>
-
-            <div className="desc-input"></div>
-          </div>
-        </div>
+        </form>
       </div>
 
       {/* Avatar upload modal */}

@@ -208,6 +208,10 @@
                         opacity: 0;
                         cursor: pointer;
                         transition: all 0.3s ease-in-out;
+
+                        &.fa-trash-can {
+                            color: red;
+                        }
                     }
 
                     .desc-item {
@@ -218,11 +222,47 @@
                             padding: 0;
                         }
                     }
+
+                    .placeholder {
+                        color: $color-grey-3;
+                    }
                 }
 
                 &:last-of-type {
                     margin-bottom: 0;
                     border: none;
+                }
+
+                .desc-input {
+                    display: none;
+
+                    &.displayed {
+                        display: block;
+                    }
+
+                    .input-field {
+                        margin: 12px 0;
+                    }
+
+                    .cancel-btn {
+                        border: 1px solid $color-grey-2;
+                        color: $color-grey-2;
+                        transition: all 0.3s ease-in-out;
+
+                        &:hover {
+                            color: $primary-color;
+                        }
+                    }
+
+                    .add-btn {
+                        background: $primary-color;
+                        color: #fff;
+                        transition: all 0.3s ease-in-out;
+
+                        &:hover {
+                            opacity: 0.8;
+                        }
+                    }
                 }
             }
         }
@@ -250,7 +290,6 @@
     }
 
     .avatar-container {
-
         height: 300px;
         overflow: hidden;
         margin-bottom: 20px;

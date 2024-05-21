@@ -34,7 +34,7 @@ const FixedHeader = () => {
     try {
       const res = await manageGigServ.getMenuItems();
       setMenuItems(res.data.content);
-      console.log(res.data.content);
+
     } catch (err) {
       console.log(err);
     }
