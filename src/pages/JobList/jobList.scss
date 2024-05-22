@@ -1,0 +1,323 @@
+@import "../../utils/variables.scss";
+
+.gig-list-container {
+    .gig-list-wrapper {
+        margin: 48px auto 48px;
+        max-width: 1400px;
+
+        .overflow-x-scroll {
+            ul {
+                li {
+                    margin-right: 8px;
+                }
+            }
+        }
+
+        .filter-wrapper {
+            margin: 24px 0;
+
+            p {
+                margin-top: 24px;
+                color: $color-grey-2;
+                font-size: 18px;
+            }
+
+            .filter-field {
+                width: fit-content;
+            }
+
+            .filter {
+                width: 200px;
+
+                button[data-slot="trigger"] {
+                    background: #fff;
+                    border: $border-style;
+                    border-radius: 8px;
+
+                    label {
+                        color: $color-dark-2;
+                        font-weight: 600;
+                        font-size: 18px;
+                    }
+                }
+            }
+        }
+
+        .gig-photo {
+            border: $border-style;
+            cursor: pointer;
+        }
+
+        .gig-list {
+            margin-bottom: 48px;
+
+            .gig-item {
+                cursor: default;
+                margin-bottom: 48px;
+                .seller {
+                    margin: 12px 0;
+                    margin-bottom: 12px;
+                    .seller-info {
+                        .seller-avatar {
+                            height: 40px;
+                            width: 40px;
+                            border-radius: 50%;
+                            overflow: hidden;
+                            margin-right: 12px;
+                            cursor: pointer;
+
+                            &:hover {
+                                filter: brightness(1.2);
+                            }
+
+                            img {
+                                height: 100%;
+                                width: 100%;
+                                object-fit: cover;
+                            }
+
+                            .placeholder-avatar {
+                                height: 100%;
+                                width: 100%;
+                                background: url(../../assets/default-avatar.png);
+                                background-position: center;
+                                background-size: cover;
+                            }
+                        }
+                    }
+
+                    .seller-name {
+                        font-weight: 600;
+                        color: $color-dark-2;
+                        cursor: pointer;
+
+                        &:hover {
+                            text-decoration: underline;
+                        }
+                    }
+
+                    .rating {
+                        .reviews {
+                            margin-left: 12px;
+                            color: $color-grey-3;
+                        }
+                    }
+                }
+
+                .title {
+                    margin-bottom: 12px;
+                    color: $color-dark;
+                    cursor: pointer;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+
+                .price {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: $color-dark-2;
+                }
+            }
+        }
+    }
+}
+
+.filter-modal {
+    .filter-style {
+        padding: 24px;
+        height: 320px;
+        overflow-y: scroll;
+
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            background-color: #f5f5f5;
+        }
+
+        &::-webkit-scrollbar {
+            width: 12px;
+            background-color: #f5f5f5;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+            background-color: $primary-color;
+        }
+    }
+
+    .filter-selection-wrapper {
+        .filter-selection {
+            div {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                column-gap: 96px;
+                row-gap: 24px;
+            }
+            & > span {
+                margin-bottom: 24px;
+                color: $color-dark-2;
+                font-weight: 700;
+                font-size: 18px;
+            }
+
+            .checkbox-item > span:first-of-type {
+                border-radius: 2px;
+
+                &::before {
+                    border-radius: 2px;
+                }
+
+                &::after {
+                    border-radius: 2px;
+                    background: $primary-color;
+                }
+            }
+
+            .checkbox-item > span:nth-of-type(2) {
+                text-wrap: nowrap;
+                color: $color-dark-2;
+                font-weight: 600;
+
+                span {
+                    color: $color-grey-3;
+                    font-weight: 500;
+                }
+
+                .new-label {
+                    display: inline-flex;
+                    justify-content: center;
+                    text-align: center;
+                    padding: 2px 7px 3px;
+                    margin: 0 8px;
+                    border: 1px solid rgb(255, 98, 173);
+                    color: rgb(255, 98, 173);
+                    border-radius: 50px;
+                    font-size: 14px;
+                    line-height: 100%;
+                }
+            }
+        }
+    }
+
+    .filter-radio-wrapper {
+        overflow: auto;
+        min-width: 250px;
+
+        .radio-item > span:first-of-type {
+            span {
+                background: $primary-color;
+            }
+        }
+
+        .radio-item[data-selected=true] > span:first-of-type {
+            border-color: $primary-color;
+        }
+
+
+        .radio-item {
+            margin-bottom: 12px;
+            div:nth-of-type(2) {
+                span {
+                    color: $color-dark-2;
+                    font-weight: 600;
+
+                    span {
+                        color: $color-grey-3;
+                        font-weight: 500;
+                        margin-left: 12px;
+                    }
+                }
+            }
+        }
+    }
+
+    .selection-expand {
+        display: inline-block;
+        margin-top: 12px;
+        cursor: pointer;
+        color: $color-grey-2;
+        text-decoration: underline;
+    }
+
+    .filter-btn-wrapper {
+        padding: 12px;
+        span {
+            color: $color-grey-2;
+            font-weight: 600;
+            font-size: 18px;
+            cursor: pointer;
+
+            &:hover {
+                color: $color-grey-3;
+            }
+        }
+
+        .filter-apply-btn {
+            background: $color-dark-2;
+            color: #fff;
+            font-weight: 600;
+            font-size: 18px;
+            padding: 24px 30px;
+            border-radius: 4px;
+        }
+    }
+}
+
+.divider {
+    border-top: $border-style;
+    margin: 24px 0;
+}
+
+.filter-button {
+    background: #fff;
+    padding: 24px 12px;
+    border: $border-style;
+    border-radius: 8px;
+    margin-right: 12px;
+
+    div {
+        span {
+            margin-right: 48px;
+            color: $color-dark-2;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        i {
+            transform: rotate(0);
+            transition: transform 0.3s ease-in-out;
+        }
+    }
+
+    &.ant-popover-open {
+        div {
+            i {
+                transform: rotate(-180deg);
+            }
+        }
+    }
+}
+
+.filter-modal-overlay {
+    .ant-popover-content {
+        max-width: fit-content;
+    }
+}
+
+.filter-input {
+    div {
+        div[data-slot="input-wrapper"] {
+            background: #fff;
+            box-shadow: none;
+            border: $border-style;
+            border-radius: 4px;
+
+            &[data-hover=true] {
+                background: #fff;
+            }
+        }
+    }
+}

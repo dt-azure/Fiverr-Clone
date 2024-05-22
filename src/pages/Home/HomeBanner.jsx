@@ -2,11 +2,16 @@ import { Carousel, Input } from "antd";
 import React from "react";
 import "./banner.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useNavigate } from "react-router-dom";
 
 const { Search } = Input;
 
 const HomeBanner = () => {
-  const onSearch = (value, _e, info) => console.log(info?.source, value);
+  const navigate = useNavigate();
+
+  const handleSearch = (input, _e, info) => {
+    navigate(`/gigs?query=${input}&page=1`);
+  };
 
   return (
     <>
@@ -106,7 +111,7 @@ const HomeBanner = () => {
               allowClear
               enterButton
               size="large"
-              onSearch={onSearch}
+              onSearch={handleSearch}
             />
             <div className="popular flex mt-10 text-white gap-5 items-center font-bold">
               <span>Popular: </span>

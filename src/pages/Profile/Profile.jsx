@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FixedHeader from "../../layouts/Header/FixedHeader";
 import Footer from "../../layouts/Footer/Footer";
 import "./profile.scss";
@@ -7,6 +7,10 @@ import AcceptedGigs from "./AcceptedGigs";
 import { ToastContainer } from "react-toastify";
 
 const Profile = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
     <>
       <FixedHeader />

@@ -5,6 +5,10 @@ export const manageGigServ = {
   getGigDetails: (id) => {
     return http.get(`/cong-viec/lay-cong-viec-chi-tiet/${id}`);
   },
+  getGigsData: (pageIndex = "", pageSize = "", keyword = "") => {
+    let apiParam = formatPaginationParams(pageIndex, pageSize, keyword);
+    return http.get(`/cong-viec/phan-trang-tim-kiem?${apiParam}`);
+  },
   getGigDataWithPagination: (pageIndex = "", pageSize = "", keyword = "") => {
     let apiParam = formatPaginationParams(pageIndex, pageSize, keyword);
     return http.get(`/cong-viec/phan-trang-tim-kiem?${apiParam}`);

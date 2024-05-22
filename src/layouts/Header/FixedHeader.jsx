@@ -34,10 +34,13 @@ const FixedHeader = () => {
     try {
       const res = await manageGigServ.getMenuItems();
       setMenuItems(res.data.content);
-
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const handleSearch = (input) => {
+    navigate(`/gigs?query=${input}&page=1`);
   };
 
   useEffect(() => {
@@ -71,7 +74,7 @@ const FixedHeader = () => {
         <div className="search-box">
           <Search
             placeholder="What service are you looking for today?"
-            // onSearch={onSearch}
+            onSearch={handleSearch}
             enterButton
           />
         </div>
@@ -89,7 +92,7 @@ const FixedHeader = () => {
                     arrow={true}
                   >
                     <button className="navbar__links-btn flex items-center justify-center">
-                      <i class="fa-regular fa-bell"></i>
+                      <i className="fa-regular fa-bell"></i>
                     </button>
                   </Popover>
                 </div>
@@ -105,7 +108,7 @@ const FixedHeader = () => {
                     arrow={true}
                   >
                     <button className="navbar__links-btn flex items-center justify-center">
-                      <i class="fa-solid fa-envelope"></i>
+                      <i className="fa-solid fa-envelope"></i>
                     </button>
                   </Popover>
                 </div>
@@ -121,7 +124,7 @@ const FixedHeader = () => {
                     arrow={true}
                   >
                     <button className="navbar__links-btn flex items-center justify-center">
-                      <i class="fa-regular fa-heart"></i>
+                      <i className="fa-regular fa-heart"></i>
                     </button>
                   </Popover>
                 </div>
@@ -141,6 +144,7 @@ const FixedHeader = () => {
                     content={
                       <ul>
                         <li
+                          key="1"
                           onClick={() => {
                             navigate(
                               `/profile/${userLocal.data.content.user.id}`
@@ -149,27 +153,34 @@ const FixedHeader = () => {
                         >
                           Profile
                         </li>
-                        <li>Post a Request</li>
-                        <li className="highlight">Refer a Friend</li>
-                        <li className="divider"></li>
-                        <li>Become a Seller</li>
-                        <li>Settings</li>
-                        <li>Billing & Payments</li>
-                        <li className="divider"></li>
-                        <li className="flex items-center">
-                          <span className="mr-2">English</span>
-                          <i class="fa-solid fa-earth-americas mt-1"></i>
+                        <li key="2">Post a Request</li>
+                        <li key="3" className="highlight">
+                          Refer a Friend
                         </li>
-                        <li>$ USD</li>
-                        <li>Help & Support</li>
-                        <li className="divider"></li>
-                        <li className="flex items-center justify-between">
+                        <li key="4" className="divider"></li>
+                        <li key="5">Become a Seller</li>
+                        <li key="6">Settings</li>
+                        <li key="7">Billing & Payments</li>
+                        <li key="8" className="divider"></li>
+                        <li key="9" className="flex items-center">
+                          <span className="mr-2">English</span>
+                          <i className="fa-solid fa-earth-americas mt-1"></i>
+                        </li>
+                        <li key="10">$ USD</li>
+                        <li key="11">Help & Support</li>
+                        <li key="12" className="divider"></li>
+                        <li
+                          key="13"
+                          className="flex items-center justify-between"
+                        >
                           <span className="mr-4">Invite your team</span>
                           <a className="flex items-center justify-center">
                             FIVERR PRO
                           </a>
                         </li>
-                        <li onClick={handleLogOut}>Logout</li>
+                        <li key="1" onClick={handleLogOut}>
+                          Logout
+                        </li>
                       </ul>
                     }
                     placement="bottomRight"
@@ -190,7 +201,7 @@ const FixedHeader = () => {
         ) : (
           <nav className="navbar__links">
             <ul className="flex items-center gap-8 font-semibold">
-              <li>
+              <li key="1">
                 <div>
                   <Popover
                     trigger="click"
@@ -206,12 +217,12 @@ const FixedHeader = () => {
                       className=""
                     >
                       Fiverr Pro
-                      <i class="fa-solid fa-chevron-down ml-4 .navbar__dropdown-closed"></i>
+                      <i className="fa-solid fa-chevron-down ml-4 .navbar__dropdown-closed"></i>
                     </button>
                   </Popover>
                 </div>
               </li>
-              <li>
+              <li key="1">
                 <div>
                   <Popover
                     id="navbar__explore"
@@ -227,14 +238,19 @@ const FixedHeader = () => {
                       }}
                     >
                       Explore
-                      <i class="fa-solid fa-chevron-down ml-4 .navbar__dropdown-closed"></i>
+                      <i className="fa-solid fa-chevron-down ml-4 .navbar__dropdown-closed"></i>
                     </button>
                   </Popover>
                 </div>
               </li>
-              <li className="cursor-pointer">English</li>
-              <li className="cursor-pointer">Become a Seller</li>
+              <li key="2" className="cursor-pointer">
+                English
+              </li>
+              <li key="3" className="cursor-pointer">
+                Become a Seller
+              </li>
               <li
+                key="4"
                 className="cursor-pointer"
                 onClick={() => {
                   navigate("/sign-in");
@@ -243,6 +259,7 @@ const FixedHeader = () => {
                 Sign In
               </li>
               <li
+                key="5"
                 className="cursor-pointer py-2 px-4 join-btn"
                 onClick={() => {
                   navigate("/sign-up");
@@ -257,7 +274,7 @@ const FixedHeader = () => {
       <div className="categories-menu px-1">
         <ul className="flex">
           {menuItems.map((item) => (
-            <li>
+            <li key={item.id}>
               <a href="/">{item.tenLoaiCongViec}</a>
             </li>
           ))}

@@ -12,6 +12,7 @@ import ManageHiredGigs from "../pages/Admin/ManageHiredGigs";
 import ManageGigCategory from "../pages/Admin/ManageGigCategory";
 import ManageGigSubcategory from "../pages/Admin/ManageGigSubcategory";
 import ManageComments from "../pages/Admin/ManageComments";
+import JobList from "../pages/JobList/JobList";
 
 const useRoutesCustom = () => {
   const routes = useRoutes([
@@ -34,6 +35,10 @@ const useRoutesCustom = () => {
     {
       path: "/sign-up",
       element: <SignUp />,
+    },
+    {
+      path: "/gigs",
+      element: <JobList />,
     },
     {
       path: "/admin",

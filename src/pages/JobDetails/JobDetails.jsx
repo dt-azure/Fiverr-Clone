@@ -13,7 +13,7 @@ import {
 import { ToastContainer } from "react-toastify";
 
 const JobDetails = () => {
-  const { isLoading } = useSelector((state) => state.loadingSlice);
+  const [isLoading, setIsLoading] = useState(true);
   const [gigDetails, setGigDetails] = useState({
     id: "",
     congViec: {
@@ -39,13 +39,11 @@ const JobDetails = () => {
 
   const handleGetGigDetails = async () => {
     try {
-      dispatch(handleLoadingOn());
       const res = await manageGigServ.getGigDetails(gigId);
       setGigDetails(res.data.content[0]);
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
-    } finally {
-      dispatch(handleLoadingOff());
     }
   };
 
@@ -55,13 +53,15 @@ const JobDetails = () => {
   }, [gigId]);
 
   // useEffect(() => {
-    
+
   // }, [gigDetails]);
 
-  // useEffect(() => {
-  //   console.log(gigDetails)
-  //   dispatch(handleLoadingOff());
-  // }, [gigDetails]);
+  useEffect(() => {
+    let scrollTarget = document.querySelector(".gig-page");
+    if (scrollTarget) {
+      scrollTarget.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [gigDetails]);
 
   return (
     <>

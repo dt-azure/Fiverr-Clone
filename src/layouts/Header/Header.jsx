@@ -45,13 +45,14 @@ const Header = () => {
     try {
       const res = await manageGigServ.getMenuItems();
       setMenuItems(res.data.content);
-
     } catch (err) {
       console.log(err);
     }
   };
 
-  window.addEventListener("scroll", handleToggleHeader);
+  const handleSearch = (input) => {
+    navigate(`/gigs?query=${input}&page=1`);
+  };
 
   useEffect(() => {
     // If the page reloads and current screen is not at the top of the page -> adds the appropriate classes
@@ -66,6 +67,8 @@ const Header = () => {
     }
 
     handleGetMenuItems();
+
+    window.addEventListener("scroll", handleToggleHeader);
 
     return () => {
       window.removeEventListener("scroll", handleToggleHeader);
@@ -94,7 +97,7 @@ const Header = () => {
         <div className="search-box">
           <Search
             placeholder="What service are you looking for today?"
-            // onSearch={onSearch}
+            onSearch={handleSearch}
             enterButton
           />
         </div>
