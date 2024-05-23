@@ -5,14 +5,14 @@ import Profile from "../pages/Profile/Profile";
 import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
 import Admin from "../pages/Admin/Admin";
-import ManageUsers from "../pages/Admin/ManageUsers";
-import AddUser from "../pages/Admin/AddUser";
 import ManageGigs from "../pages/Admin/ManageGigs";
 import ManageHiredGigs from "../pages/Admin/ManageHiredGigs";
 import ManageGigCategory from "../pages/Admin/ManageGigCategory";
 import ManageGigSubcategory from "../pages/Admin/ManageGigSubcategory";
 import ManageComments from "../pages/Admin/ManageComments";
 import JobList from "../pages/JobList/JobList";
+import ManageUsers from "../pages/Admin/ManageUsers";
+
 
 const useRoutesCustom = () => {
   const routes = useRoutes([
@@ -43,22 +43,10 @@ const useRoutesCustom = () => {
     {
       path: "/admin",
       element: <Admin />,
-      children: [
-        {
-          index: true,
-          element: <AddUser />,
-        },
+      children: [,
         {
           path: "users",
           element: <ManageUsers />,
-        },
-        {
-          path: "manage-user",
-          element: <AddUser />,
-        },
-        {
-          path: "manage-user/:userId",
-          element: <AddUser />,
         },
         {
           path: "gigs",

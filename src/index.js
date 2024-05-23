@@ -10,7 +10,7 @@ import { NextUIProvider } from "@nextui-org/react";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
-  <NextUIProvider>
+  <NextUIProvider locale="en-GB">
     <Provider store={store}>
       <BrowserRouter>
         <App />

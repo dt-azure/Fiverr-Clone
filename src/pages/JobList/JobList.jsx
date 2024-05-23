@@ -25,7 +25,7 @@ import "./jobList.scss";
 import { Popover, Rate } from "antd";
 import useSWR from "swr";
 
-import { formatNumber, formatPaginationParams } from "../../utils/util";
+import { formatNumber } from "../../utils/util";
 
 const JobList = () => {
   //   const { isLoading } = useSelector((state) => state.loadingSlice);
@@ -40,6 +40,7 @@ const JobList = () => {
   const [budgetValue, setBudgetValue] = useState("");
   const [radioValue, setRadioValue] = useState("");
   const filterField = document.querySelector(".filter-field");
+  const modalField = document.querySelector(".ant-popover-inner");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -358,10 +359,11 @@ const JobList = () => {
   }, []);
 
   useEffect(() => {
-    //   Close all filters when click outside
+    // Close all filters when click outside
 
     const handleClickOutside = (e) => {
-      if (!filterField.contains(e.target)) {
+      let parent = e.target.closest(".ant-popover");
+      if (!parent) {
         setIsFilterOpen({ seller: false, budget: false, delivery: false });
       }
     };

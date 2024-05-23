@@ -1,151 +1,167 @@
-import { Button, Modal, Popover, Table } from "antd";
 import Search from "antd/es/input/Search";
-import React, { useEffect, useRef, useState } from "react";
-import { manageUserServ } from "../../services/manageUser";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Pagination,
+  Spinner,
+  PopoverContent,
+  PopoverTrigger,
+  Popover,
+  Dropdown,
+  DropdownTrigger,
+  DropdownItem,
+  DropdownMenu,
+  Button,
+  useDisclosure,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "@nextui-org/react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { manageUserServ } from "../../services/manageUser.js";
 import {
   formatDate,
   notifyErr,
   notifyErrBasic,
   notifySuccess,
 } from "../../utils/util.js";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  handleEnableUpdateBtn,
-  handleSelectUser,
-} from "../../redux/slice/userSlice.js";
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import * as Yup from "yup";
 import { useFormik } from "formik";
+import useSWR from "swr";
+import { VerticalDotsIcon } from "../../components/Icons/VerticalDotsIcon.jsx";
+import AddUserForm from "./AddUserForm.jsx";
+import { getLocalTimeZone, today } from "@internationalized/date";
 
 const ManageUsers = () => {
-  const [userList, setUserList] = useState([]);
-  const [tableLoading, setTableLoading] = useState(false);
-  const [tableParams, setTableParams] = useState({
-    pagination: {
-      current: 1,
-      pageSize: 10,
-    },
-  });
+  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [pageSize, setPageSize] = useState(10);
   const searchRef = useRef();
   const [searchKeyword, setSearchKeyword] = useState("");
-  // const [modalOpen, setModalOpen] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [selectedUser, setSelectedUser] = useState({});
+  const [isSubmit, setIsSubmit] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // const [isEdit, setIsEdit] = useState(false);
-  // const [currentAvatar, setCurrentAvatar] = useState("");
 
-  const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      width: 100,
-      fixed: "left",
+  // User form
+  const {
+    handleChange,
+    handleBlur,
+    values,
+    errors,
+    touched,
+    handleSubmit,
+    setValues,
+    setFieldValue,
+    handleReset,
+    resetForm,
+  } = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+      phone: "",
+      birthday: "",
+      gender: true,
+      role: "",
+      skill: [],
+      certification: [],
     },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      width: 150,
-      fixed: "left",
+    onSubmit: async (values) => {
+      if (isSubmit) {
+        try {
+          await manageUserServ.addUser({
+            ...values,
+            birthday: values.birthday.toString(),
+          });
+          notifySuccess("User added successfully.");
+        } catch (err) {
+          notifyErr("An error has occurred.");
+          console.log(err);
+        }
+      } else {
+        try {
+          const newFormData = {
+            id: selectedUser.id,
+            name: values.name,
+            email: values.email,
+            phone: values.phone,
+            birthday: values.birthday.toString(),
+            gender: values.gender,
+            role: values.role,
+            skill: values.skill,
+            certification: values.certification,
+          };
+          await manageUserServ.updateUserInfo(selectedUser.id, newFormData);
+          setSearchParams(searchParams);
+          notifySuccess("User info updated successfully.");
+        } catch (err) {
+          notifyErr("An error has occurred.");
+          console.log(err);
+        }
+      }
     },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      width: 250,
-    },
-    {
-      title: "Phone No.",
-      dataIndex: "phone",
-      key: "phone",
-      width: 150,
-    },
-    {
-      title: "Birthday",
-      dataIndex: "birthday",
-      key: "birthday",
-      width: 150,
-    },
-    {
-      title: "Avatar",
-      dataIndex: "avatar",
-      key: "avatar",
-      width: 100,
-    },
-    {
-      title: "Gender",
-      dataIndex: "gender",
-      key: "gender",
-      width: 150,
-    },
-    {
-      title: "Role",
-      dataIndex: "role",
-      key: "role",
-      width: 150,
-    },
-    Table.EXPAND_COLUMN,
-    {
-      title: "Action",
-      dataIndex: "action",
-      key: "action",
-      fixed: "right",
-    },
-  ];
+    validationSchema: Yup.object({
+      name: Yup.string()
+        .required("Field is required.")
+        .matches(/^[a-zA-Z ]+$/, "Invalid name."),
+      email: Yup.string()
+        .required("Field is required.")
+        .matches(
+          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+          "Invalid email."
+        ),
+      phone: Yup.string()
+        .required("Field is required.")
+        .matches(/^[0-9]{8,10}$/, "Invalid phone number."),
+      password: isSubmit
+        ? Yup.string()
+            .required("Field is required.")
+            .matches(
+              /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+              "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character and have at least 8 characters."
+            )
+        : null,
+    }),
+  });
 
-  // Generating HTML element for each row of the user list table
-  const generateRow = (user) => {
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      birthday: formatDate(user.birthday),
-      avatar: (
-        <div className="dashboard-avatar flex items-center justify-center">
-          {user.avatar == "" ? (
-            <div className="placeholder-avatar"></div>
-          ) : (
-            <img src={user.avatar}></img>
-          )}
-        </div>
-      ),
-      gender: user.gender ? "Male" : "Female",
-      role: user.role,
-      skillsAndCert: [user.skill, user.certification],
-      action: (
-        <div className="dashboard-action flex items-center gap-4">
-          <Popover
-            content={<div className="text-green-600">Edit Info</div>}
-            trigger="hover"
-            id="dashboard-popover"
-          >
-            <Button
-              onClick={() => {
-                handleEditUserClick(user);
-              }}
-            >
-              <i className="fa-regular fa-pen-to-square"></i>
-            </Button>
-          </Popover>
+  const fetcher = ([pageIndex, pageSize, keyword]) =>
+    manageUserServ
+      .getUserDataWithPagination(pageIndex, pageSize, keyword)
+      .then((res) => {
+        console.log(res);
+        setTotalCount(res.data.content.totalRow);
 
-          <Popover
-            content={<div className="text-red-600">Delete User</div>}
-            trigger="hover"
-            id="dashboard-popover"
-          >
-            <Button
-              onClick={() => {
-                handleDeleteUser(user.id);
-              }}
-            >
-              <i className="fa-solid fa-trash text-red-500 hover:text-red-600"></i>
-            </Button>
-          </Popover>
-        </div>
-      ),
-    };
-  };
+        return res.data.content.data;
+      });
+
+  const { data, error, isLoading, mutate } = useSWR(
+    [
+      searchParams.get("page"),
+      pageSize,
+      searchParams.get("query") == "all" ? "" : searchParams.get("query"),
+    ],
+    fetcher,
+    {
+      keepPreviousData: true,
+    }
+  );
+
+  const pages = useMemo(() => {
+    return data ? Math.ceil(totalCount / pageSize) : 0;
+  }, [data?.length, pageSize, totalCount]);
+
+  const loadingState = isLoading || data?.length === 0 ? "loading" : "idle";
 
   // Take items from skills/cert list and format them into 1 str
   const formatStr = (list) => {
@@ -156,101 +172,53 @@ const ManageUsers = () => {
     return result.slice(0, -2);
   };
 
-  // Generate the HTML element for skill/cert expanded section
-  const generateSkillSection = (item) => (
-    <div className="m-0">
-      <div className="skills flex items-center">
-        <span className="mr-4 font-bold">Skills:</span>
-        {formatStr(item[0])}
-      </div>
-      <div className="cert flex items-center">
-        <span className="mr-4 font-bold">Certifications:</span>
-        {formatStr(item[1])}
-      </div>
-    </div>
-  );
+  // const handleGetUserData = async (
+  //   pageIndex = "",
+  //   pageSize = "",
+  //   keyword = ""
+  // ) => {
+  //   try {
+  //     setTableLoading(true);
+  //     const users = await manageUserServ.getUserDataWithPagination(
+  //       pageIndex,
+  //       pageSize,
+  //       keyword
+  //     );
 
-  // Handle table pagination
-  const handleTableChange = async (pagination, sorter) => {
-    if (pagination.current * pagination.pageSize > userList.length) {
-      await manageUserServ
-        .getUserDataWithPagination(
-          "1",
-          pagination.current * pagination.pageSize,
-          searchKeyword
-        )
-        .then((res) => {
-          const newUserList = [];
-          res.data.content.data.slice(userList.length).map((item) => {
-            let newRow = generateRow(item);
-            newUserList.push(newRow);
-          });
-          const newList = [...userList].concat(newUserList);
-          // console.log(newList);
-          setUserList(newList);
-          setTableLoading(false);
-        })
-        .catch((err) => {
-          notifyErr("An error has occurred.");
-        });
-    }
+  //     let newUserList = [];
+  //     await users.data.content.data.map((item) => {
+  //       let newRow = generateRow(item);
+  //       newUserList.push(newRow);
+  //     });
 
-    setTableParams({
-      ...pagination,
-      pagination: {
-        total: pagination.total,
-      },
-    });
-  };
-
-  // API call to get user data
-  const handleGetUserData = async (
-    pageIndex = "",
-    pageSize = "",
-    keyword = ""
-  ) => {
-    try {
-      setTableLoading(true);
-      const users = await manageUserServ.getUserDataWithPagination(
-        pageIndex,
-        pageSize,
-        keyword
-      );
-
-      let newUserList = [];
-      await users.data.content.data.map((item) => {
-        let newRow = generateRow(item);
-        newUserList.push(newRow);
-      });
-
-      setUserList(newUserList);
-      setTableParams({
-        ...tableParams,
-        pagination: {
-          // current: 1,
-          // pageSize: 10,
-          total: users.data.content.totalRow,
-        },
-      });
-      setTableLoading(false);
-    } catch (err) {
-      notifyErr("An error has occurred.");
-      setTableLoading(false);
-    }
-  };
+  //     setUserList(newUserList);
+  //     setTableParams({
+  //       ...tableParams,
+  //       pagination: {
+  //         // current: 1,
+  //         // pageSize: 10,
+  //         total: users.data.content.totalRow,
+  //       },
+  //     });
+  //     setTableLoading(false);
+  //   } catch (err) {
+  //     notifyErr("An error has occurred.");
+  //     setTableLoading(false);
+  //   }
+  // };
 
   // Handle API call with search keyword when search button is pressed
   const onSearch = (value, _e, info) => {
-    setSearchKeyword(value);
+    setSearchParams({
+      page: "1",
+      query: value,
+    });
   };
 
   // Reset table when search input field is empty
   const onSearchChange = () => {
     if (searchRef.current.input.value == "") {
-      setSearchKeyword("");
-      setUserList([]);
-
-      handleGetUserData("1", "10", "");
+      setSearchParams({ page: searchParams.get("page"), query: "all" });
     }
   };
 
@@ -260,58 +228,21 @@ const ManageUsers = () => {
       await manageUserServ.deleteUser(id);
       notifySuccess("User deleted successfully.");
 
-      // Update table with a new API call, keyword used to make sure current view is not changed
-      setUserList([]);
-      handleGetUserData("1", "10", searchKeyword);
+      mutate([...data]);
     } catch (err) {
       notifyErr("An error has occurred.");
     }
   };
 
-  // const handleUpdateAvatar = async (avatar) => {
-  //   let formData = new FormData();
-
-  //   formData.append("File", avatar);
-  //   console.log(formData)
-  //   try {
-  //     await manageUserServ.updateAvatar(formData);
-  //     setIsEdit(true);
-  //     notifySuccess("Avatar updateds successfully.");
-  //   } catch (err) {
-  //     console.log(err);
-  //     notifyErrBasic();
-  //   }
-  // };
-
   // Pass selected user's info to store then redirect to manage user page when update button is pressed
-  const handleEditUserClick = async (user) => {
-    dispatch(handleSelectUser(user));
-    dispatch(handleEnableUpdateBtn());
-    navigate(`../manage-user/${user.id}`);
-  };
-
-  // const showModal = () => {
-  //   setModalOpen(true);
-  // };
-
-  // const handleCancel = () => {
-  //   if (isEdit) {
-  //     handleGetUserData(
-  //       tableParams.current,
-  //       tableParams.pageSize,
-  //       searchKeyword
-  //     );
-  //     setIsEdit(false);
-  //   }
-
-  //   // Reset input
-  //   document.getElementById("avatar-input").value = "";
-  //   setCurrentAvatar("");
-  //   setModalOpen(false);
+  // const handleEditUserClick = async (user) => {
+  //   dispatch(handleSelectUser(user));
+  //   dispatch(handleEnableUpdateBtn());
+  //   navigate(`../manage-user/${user.id}`);
   // };
 
   useEffect(() => {
-    handleGetUserData("1", "10");
+    // handleGetUserData("1", "10");
 
     return () => {
       setSearchKeyword("");
@@ -319,79 +250,218 @@ const ManageUsers = () => {
   }, []);
 
   useEffect(() => {
-    setUserList([]);
-    handleGetUserData("1", "10", searchKeyword);
+    // setUserList([]);
+    // handleGetUserData("1", "10", searchKeyword);
   }, [searchKeyword]);
+
+  useEffect(() => {
+    // Reset form when modal is closed
+    if (!isOpen) {
+      setIsSubmit(true);
+      resetForm();
+    }
+  }, [isOpen]);
 
   return (
     <div>
-      <h2 className="dashboard-title">User List</h2>
-      <Search
-      id="admin-search"
-        placeholder="Search by account name"
-        allowClear
-        onSearch={onSearch}
-        onChange={onSearchChange}
-        ref={searchRef}
-      />
+      <div className="flex items-center justify-between">
+        <h2 className="dashboard-title">User List</h2>
+        <Button onPress={onOpen} className="admin-add-btn" radius="sm">
+          Add User
+        </Button>
+      </div>
+      <div className="search-box">
+        <Search
+          className="admin-search"
+          placeholder="Search by account name"
+          allowClear
+          onSearch={onSearch}
+          onChange={onSearchChange}
+          ref={searchRef}
+        />
+      </div>
+
       <Table
-        columns={columns}
-        rowKey={(record) => record.id}
-        expandable={{
-          expandedRowRender: (record) =>
-            generateSkillSection(record.skillsAndCert),
-        }}
-        scroll={{
-          x: 1500,
-          y: window.innerHeight * 0.5,
-          scrollToFirstRowOnChange: false,
-        }}
-        loading={tableLoading}
-        pagination={tableParams.pagination}
-        dataSource={userList}
-        onChange={handleTableChange}
-      />
-      {/* <Modal open={modalOpen} footer={null} onCancel={handleCancel}>
-        <div className="admin-modal-wrapper">
-          <div className="flex modal-item items-center">
-            <div className="dashboard-avatar flex items-center justify-center">
-              {currentAvatar.url == "" ? (
-                <div className="placeholder-avatar"></div>
-              ) : (
-                <img src={currentAvatar.url}></img>
-              )}
-            </div>
-            <div className="input-wrapper flex-1">
-              <input
-                id="avatar-input"
-                type="file"
-                accept=".jpg,.jpeg,.png,.webp"
-                onChange={(e) => {
-                  let avatarURL =
-                    e.target.files.length != 0
-                      ? URL.createObjectURL(e.target.files[0])
-                      : "";
-                  setCurrentAvatar({ url: avatarURL, file: e.target.files[0] });
+        className="admin-table"
+        classNames={{ tr: "admin-table-row" }}
+        aria-label="User Table"
+        bottomContent={
+          pages > 0 ? (
+            <div className="flex w-full justify-center">
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                color="primary"
+                page={page}
+                total={pages}
+                onChange={(page) => {
+                  setSearchParams({
+                    page: page,
+                    query: searchParams.get("query"),
+                  });
+                  setPage(page);
                 }}
               />
             </div>
-          </div>
+          ) : null
+        }
+      >
+        <TableHeader>
+          <TableColumn key="id">ID</TableColumn>
+          <TableColumn key="name">Name</TableColumn>
+          <TableColumn key="email">Email</TableColumn>
+          <TableColumn key="phone">Phone No.</TableColumn>
+          <TableColumn key="birthday">Birthday</TableColumn>
+          <TableColumn key="avatar">Avatar</TableColumn>
+          <TableColumn key="gender">Gender</TableColumn>
+          <TableColumn key="role">Role</TableColumn>
+          <TableColumn key="cert-and-skill">Cert & Skill</TableColumn>
+          <TableColumn key="action">Action</TableColumn>
+        </TableHeader>
+        <TableBody
+          items={data ?? []}
+          loadingContent={<Spinner />}
+          loadingState={loadingState}
+        >
+          {(item) => (
+            <TableRow key={item?.id}>
+              <TableCell>{item.id}</TableCell>
+              <TableCell>{item.name}</TableCell>
+              <TableCell>{item.email}</TableCell>
+              <TableCell>{item.phone}</TableCell>
+              <TableCell>{formatDate(item.birthday)}</TableCell>
+              <TableCell>Avatar</TableCell>
+              <TableCell>{item.gender ? "Male" : "Female"}</TableCell>
+              <TableCell>{item.role}</TableCell>
+              <TableCell className="flex items-center justify-center">
+                <Popover placement="bottom-end" className="skill-popover">
+                  <PopoverTrigger>
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      variant="light"
+                      disableAnimation={true}
+                      disableRipple={true}
+                    >
+                      <i class="fa-solid fa-caret-down"></i>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <div className="cert-and-skill space-y-4">
+                      <p>
+                        Skill: <span>{formatStr(item.skill)}</span>
+                      </p>
+                      <p>
+                        Certification:{" "}
+                        <span>{formatStr(item.certification)}</span>
+                      </p>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </TableCell>
+              <TableCell>
+                <div className="relative flex justify-end items-center gap-2">
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        disableAnimation={true}
+                        disableRipple={true}
+                      >
+                        <VerticalDotsIcon className="text-default-300" />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu>
+                      <DropdownItem
+                        onClick={() => {
+                          setSelectedUser(item);
+                          setIsSubmit(false);
+                          setValues({
+                            name: item.name,
+                            email: item.email,
+                            password: "",
+                            phone: item.phone,
+                            birthday: today(getLocalTimeZone()),
+                            gender: item.gender,
+                            role: item.role,
+                            skill: item.skill,
+                            certification: item.certification,
+                          });
+                          console.log(values);
+                          onOpen();
+                        }}
+                        className="admin-edit-btn"
+                      >
+                        Edit
+                      </DropdownItem>
+                      <DropdownItem
+                        className="admin-delete-btn"
+                        onClick={() => {
+                          handleDeleteUser(item.id);
+                        }}
+                      >
+                        Delete
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                </div>
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
 
-          <div className="btn-field flex justify-end">
-            <button
-              type="submit"
-              className={`bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-md p-2 disabled:bg-gray-500`}
-              onClick={() => {
-                if (currentAvatar) {
-                  handleUpdateAvatar(currentAvatar.file);
-                }
-              }}
-            >
-              Update Avatar
-            </button>
-          </div>
-        </div>
-      </Modal> */}
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        className="admin-modal"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>Add User</ModalHeader>
+              <ModalBody>
+                <AddUserForm
+                  user={selectedUser}
+                  isSubmit={isSubmit}
+                  values={values}
+                  errors={errors}
+                  handleBlur={handleBlur}
+                  touched={touched}
+                  handleChange={handleChange}
+                  handleSubmit={handleSubmit}
+                  setFieldValue={setFieldValue}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  onPress={onClose}
+                  className="admin-close-btn"
+                  radius="sm"
+                >
+                  Close
+                </Button>
+                {isSubmit ? (
+                  <Button color="primary" onPress={handleSubmit} radius="sm">
+                    Submit
+                  </Button>
+                ) : (
+                  <Button
+                    onPress={handleSubmit}
+                    className="admin-update-btn"
+                    radius="sm"
+                  >
+                    Update
+                  </Button>
+                )}
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

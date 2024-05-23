@@ -33,13 +33,7 @@ const Admin = () => {
         {
           key: "11",
           icon: <UserOutlined />,
-          label: <NavLink to="/admin/users">User List</NavLink>,
-        },
-        {
-          key: "12",
-          icon: <UserOutlined />,
-          label: <NavLink to="/admin/manage-user">Manage User</NavLink>,
-          index: true,
+          label: <NavLink to="/admin/users?query=all&page=1">Manage User</NavLink>,
         },
       ],
     },

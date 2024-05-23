@@ -64,34 +64,10 @@
     font-weight: 700;
     font-size: 26px;
     color: $color-dark-2;
-    margin-bottom: 24px;
+
 
     & + button {
         margin-bottom: 24px;
-    }
-}
-
-#admin-search {
-    .ant-input-group-wrapper.ant-input-group-wrapper-outlined {
-        margin-bottom: 24px;
-
-        .ant-input-wrapper.ant-input-group {
-            .ant-input-affix-wrapper {
-                padding: 12px 11px;
-            }
-
-            .ant-input-group-addon {
-                .ant-btn {
-                    padding: 15px 30px;
-                    height: 100%;
-                    background: $color-blue;
-
-                    svg {
-                        fill: #fff;
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -154,7 +130,7 @@
         margin-bottom: 12px;
 
         &::-webkit-scrollbar {
-            width: 12px;
+            width: 10px;
             background-color: #f5f5f5;
         }
 
@@ -201,5 +177,167 @@
 
     img {
         object-fit: contain;
+    }
+}
+
+.search-box {
+    margin: 24px 0;
+
+    .ant-input-group-wrapper.ant-input-group-wrapper-outlined {
+        .ant-input-group {
+            .ant-input-affix-wrapper {
+                padding: 8px 12px;
+
+                input {
+                    margin-right: 24px;
+                }
+            }
+
+            .ant-input-group-addon {
+                position: relative;
+                .ant-btn {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    right: 0;
+                    padding: 8px 24px;
+                    height: 100%;
+                    background: $color-blue;
+                    z-index: 10;
+
+                    svg {
+                        fill: #fff;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.admin-table {
+    div {
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            background-color: #f5f5f5;
+        }
+
+        &::-webkit-scrollbar {
+            width: 4px;
+            background-color: #f5f5f5;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+            background-color: $color-blue;
+        }
+
+        .admin-table-row {
+            .skill-expand {
+                cursor: pointer;
+                font-weight: 600;
+                color: $color-dark-2;
+                font-size: 20px;
+            }
+        }
+    }
+}
+
+.skill-popover {
+    & > div {
+        padding: 12px 24px;
+        justify-content: flex-start;
+
+        .cert-and-skill {
+            p {
+                span {
+                    margin-left: 12px;
+                }
+            }
+        }
+    }
+}
+
+.admin-delete-btn[data-hover="true"] {
+    background: red;
+
+    span {
+        color: #fff;
+    }
+}
+
+.admin-edit-btn[data-hover="true"] {
+    background: $primary-color;
+
+    span {
+        color: #fff;
+    }
+}
+
+.admin-close-btn {
+    background: $color-red;
+    color: #fff;
+
+    &[data-hover="true"] {
+        opacity: 1;
+        background: #7f1d1d;
+    }
+}
+.admin-update-btn {
+    background: $color-orange;
+    color: #fff;
+
+    &[data-hover="true"] {
+        opacity: 1;
+        background: #d97706;
+    }
+}
+
+.admin-add-btn {
+    background: $primary-color;
+    color: #fff;
+
+    &[data-hover="true"] {
+        opacity: 1;
+        background: $primary-color-dark;
+    }
+}
+
+.admin-modal {
+    min-width: 800px;
+    max-height: 90%;
+    overflow-y: auto;
+    border-radius: 0;
+
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        background-color: #f5f5f5;
+    }
+
+    &::-webkit-scrollbar {
+        width: 10px;
+        background-color: #f5f5f5;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+        background-color: $color-blue;
+    }
+
+    header {
+        font-size: 24px;
+        font-weight: 700;
+        color: $color-dark-2;
+    }
+}
+
+
+.user-form {
+    .user-id {
+        margin-bottom: 12px;
+        
     }
 }
