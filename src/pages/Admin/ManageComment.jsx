@@ -102,7 +102,7 @@ const ManageComment = () => {
     validationSchema: Yup.object({
       content: Yup.string().required("Comment cannot be empty."),
       rating: Yup.number()
-        .typeError("Rating has to be a number")
+        .typeError("Rating has to be a number.")
         .required("Field is required.")
         .min(0, "Rating must be from 0 to 5.")
         .max(5, "Rating must be from 0 to 5."),
@@ -124,7 +124,7 @@ const ManageComment = () => {
 
       notifySuccess("Comment deleted successfully.");
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       notifyErrBasic();
     }
   };

@@ -149,7 +149,7 @@ const ManageGigs = () => {
     try {
       await manageGigServ.updateGigPhoto(gigId, formData);
       mutate([...data]);
-      notifySuccess("Avatar updateds successfully.");
+      notifySuccess("Avatar updated successfully.");
     } catch (err) {
       console.log(err);
       notifyErrBasic();

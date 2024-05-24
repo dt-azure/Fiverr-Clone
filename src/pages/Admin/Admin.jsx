@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  UploadOutlined,
   UserOutlined,
-  VideoCameraOutlined,
+  CommentOutlined,
+  UnorderedListOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
@@ -27,7 +27,7 @@ const Admin = () => {
   const items = [
     {
       key: "1",
-      icon: <UserOutlined />,
+      // icon: <UserOutlined />,
       label: "Users",
       children: [
         {
@@ -41,31 +41,35 @@ const Admin = () => {
     },
     {
       key: "2",
-      icon: <UserOutlined />,
+      // icon: <UserOutlined />,
       label: "Gigs",
       children: [
         {
           key: "21",
-          icon: <UserOutlined />,
+          icon: <UnorderedListOutlined />,
           label: (
             <NavLink to="/admin/gigs?query=all&page=1">Manage Gig</NavLink>
           ),
         },
         {
           key: "22",
-          icon: <UserOutlined />,
+          icon: <UnorderedListOutlined />,
           label: (
             <NavLink to="/admin/order?query=all&page=1">Manage Order</NavLink>
           ),
         },
         {
           key: "23",
-          icon: <UserOutlined />,
-          label: <NavLink to="/admin/category?query=all&page=1">Manage Category</NavLink>,
+          icon: <UnorderedListOutlined />,
+          label: (
+            <NavLink to="/admin/category?query=all&page=1">
+              Manage Category
+            </NavLink>
+          ),
         },
         {
           key: "24",
-          icon: <UserOutlined />,
+          icon: <UnorderedListOutlined />,
           label: (
             <NavLink to="/admin/subcategories">Manage Subcategory</NavLink>
           ),
@@ -74,12 +78,12 @@ const Admin = () => {
     },
     {
       key: "3",
-      icon: <UserOutlined />,
+      // icon: <UserOutlined />,
       label: "Others",
       children: [
         {
           key: "31",
-          icon: <UserOutlined />,
+          icon: <CommentOutlined />,
           label: <NavLink to="/admin/comment">Manage Comments</NavLink>,
         },
       ],

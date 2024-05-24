@@ -22,32 +22,34 @@ import {
   ModalFooter,
 } from "@nextui-org/react";
 import {
+  formatDate,
+  notifyErr,
   notifyErrBasic,
   notifySuccess,
 } from "../../utils/util";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import dayjs from "dayjs";
 import { VerticalDotsIcon } from "../../components/Icons/VerticalDotsIcon";
 import { useSearchParams } from "react-router-dom";
 import useSWR from "swr";
-import { getLocalTimeZone, today } from "@internationalized/date";
-import AddOrderForm from "./AddOrderForm";
 import Search from "antd/es/input/Search";
-import AddCategoryForm from "./AddCategoryForm";
+import AddSubcategoryForm from "./AddSubcategoryForm";
 
-const ManageCategory = () => {
+const ManageSubcategory = () => {
   const searchRef = useRef();
   const [totalCount, setTotalCount] = useState(0);
   const formModal = useDisclosure();
+  const photoModal = useDisclosure();
   const [isSubmit, setIsSubmit] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
+  const [selectedGroup, setSelectedGroup] = useState({});
+  const [currentPhoto, setCurrentPhoto] = useState("");
 
   const fetcher = ([pageIndex, pageSize, keyword]) =>
     manageGigServ
-      .getGigCategoryWithPagination(pageIndex, pageSize, keyword)
+      .getGigSubcategoryWithPagination(pageIndex, pageSize, keyword)
       .then((res) => {
         // console.log(res);
         setTotalCount(res.data.content.totalRow);
@@ -86,37 +88,46 @@ const ManageCategory = () => {
     resetForm,
   } = useFormik({
     initialValues: {
-      category: "",
+      maLoaiCongviec: "",
+      dsChiTietLoai: [],
+      tenNhom: "",
     },
     onSubmit: async () => {
+      console.log(values);
       if (isSubmit) {
         try {
-          await manageGigServ.addGigCategory({
-            tenLoaiCongViec: values.category,
+          await manageGigServ.addGigSubcategoryGroup({
+            tenChiTiet: values.tenNhom,
+            maLoaiCongViec: values.maLoaiCongviec,
+            danhSachChiTiet: [],
           });
           mutate([...data]);
-          notifySuccess("Category added successfully.");
+          notifySuccess("Subcategory group added successfully.");
         } catch (err) {
-          // console.log(err);
+          console.log(err);
           notifyErrBasic();
         }
       } else {
         try {
-          console.log(values);
-          await manageGigServ.updateGigCategory(values.id, {
+          await manageGigServ.updateGigSubcategoryGroup(values.id, {
             id: values.id,
-            tenLoaiCongViec: values.category,
+            tenChiTiet: values.tenChiTiet,
+            maLoaiCongViec: values.maLoaiCongviec,
+            danhSachChiTiet: values.dsChiTietLoai,
           });
           mutate([...data]);
-          notifySuccess("Category updated successfully.");
+          notifySuccess("Subcategory group updated successfully.");
         } catch (err) {
-          // console.log(err);
+          console.log(err);
           notifyErrBasic();
         }
       }
     },
     validationSchema: Yup.object({
-      category: Yup.string().required("Field is required"),
+      tenNhom: Yup.string().required("Field is required."),
+      maLoaiCongviec: Yup.number()
+        .typeError("Invalid ID.")
+        .required("Field is required."),
     }),
   });
 
@@ -143,6 +154,21 @@ const ManageCategory = () => {
   const onSearchChange = () => {
     if (searchRef.current.input.value == "") {
       setSearchParams({ page: searchParams.get("page"), query: "all" });
+    }
+  };
+
+  const handleUpdatePhoto = async (groupId, avatar) => {
+    let formData = new FormData();
+
+    formData.append("formFile", avatar);
+
+    try {
+      await manageGigServ.updateGigSubcategoryGroupPhoto(groupId, formData);
+      mutate([...data]);
+      notifySuccess("Photo updated successfully.");
+    } catch (err) {
+      console.log(err);
+      notifyErrBasic();
     }
   };
 
@@ -186,7 +212,7 @@ const ManageCategory = () => {
       </div>
 
       <Table
-        className="admin-table category-table"
+        className="admin-table"
         classNames={{ tr: "admin-table-row" }}
         aria-label="Order Table"
         bottomContent={
@@ -219,8 +245,11 @@ const ManageCategory = () => {
         }
       >
         <TableHeader>
-          <TableColumn key="id">ID</TableColumn>
-          <TableColumn key="name">Category</TableColumn>
+          <TableColumn key="id">Category ID</TableColumn>
+          <TableColumn key="maLoaiCongviec">Sub Group ID</TableColumn>
+          <TableColumn key="tenNhom">Sub Group Name</TableColumn>
+          <TableColumn key="hinhAnh">Sub Group Photo</TableColumn>
+          <TableColumn key="dsChiTietLoai">Subcategories</TableColumn>
           <TableColumn key="action">Action</TableColumn>
         </TableHeader>
         <TableBody
@@ -230,8 +259,21 @@ const ManageCategory = () => {
         >
           {(item) => (
             <TableRow key={item?.id}>
+              <TableCell>{item.maLoaiCongviec}</TableCell>
               <TableCell>{item.id}</TableCell>
-              <TableCell>{item.tenLoaiCongViec}</TableCell>
+              <TableCell>{item.tenNhom}</TableCell>
+              <TableCell>
+                <div className="dashboard-avatar flex items-center justify-center">
+                  {item.hinhAnh == "" ? (
+                    <div className="placeholder-avatar"></div>
+                  ) : (
+                    <img src={item.hinhAnh}></img>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center justify-center">Expand</div>
+              </TableCell>
               <TableCell>
                 <div className="relative flex justify-end items-center gap-2">
                   <Dropdown>
@@ -250,10 +292,13 @@ const ManageCategory = () => {
                       <DropdownItem
                         onClick={() => {
                           setIsSubmit(false);
-
+                          setSelectedGroup(item);
                           setValues({
                             id: item.id,
-                            category: item.tenLoaiCongViec,
+                            tenChiTiet: "",
+                            maLoaiCongviec: item.maLoaiCongviec,
+                            dsChiTietLoai: item.dsChiTietLoai,
+                            tenNhom: item.tenNhom,
                           });
 
                           formModal.onOpen();
@@ -266,10 +311,16 @@ const ManageCategory = () => {
                       <DropdownItem
                         className="admin-avatar-btn"
                         onClick={() => {
-                          // photoModal.onOpen();
+                 
+                          setCurrentPhoto({
+                            groupId: item.id,
+                            url: item.hinhAnh,
+                            file: null,
+                          });
+                          photoModal.onOpen();
                         }}
                       >
-                        Change Category Photo
+                        Change Group Photo
                       </DropdownItem>
 
                       <DropdownItem
@@ -299,12 +350,13 @@ const ManageCategory = () => {
           {(onClose) => (
             <>
               {isSubmit ? (
-                <ModalHeader>Add Category</ModalHeader>
+                <ModalHeader>Add Subcategory Group</ModalHeader>
               ) : (
-                <ModalHeader>Update Category</ModalHeader>
+                <ModalHeader>Update Subcategory Group</ModalHeader>
               )}
               <ModalBody>
-                <AddCategoryForm
+                <AddSubcategoryForm
+                  data={selectedGroup}
                   isSubmit={isSubmit}
                   values={values}
                   errors={errors}
@@ -341,8 +393,76 @@ const ManageCategory = () => {
           )}
         </ModalContent>
       </Modal>
+
+      {/* Photo Modal */}
+      <Modal
+        isOpen={photoModal.isOpen}
+        onOpenChange={photoModal.onOpenChange}
+        className="admin-modal"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>Update Subcategory Group Photo</ModalHeader>
+              <ModalBody>
+                <div className="modal-item items-center">
+                  <div className="avatar-input flex items-center justify-center">
+                    {currentPhoto.url == "" ? (
+                      <div className="placeholder-avatar"></div>
+                    ) : (
+                      <img src={currentPhoto.url}></img>
+                    )}
+                  </div>
+                  <div className="input-wrapper flex-1 flex justify-center">
+                    <input
+                      id="avatar-input"
+                      type="file"
+                      accept=".jpg,.jpeg,.png,.webp"
+                      onChange={(e) => {
+                        let photoURL =
+                          e.target.files.length != 0
+                            ? URL.createObjectURL(e.target.files[0])
+                            : "";
+                        setCurrentPhoto({
+                          groupId: currentPhoto.groupId,
+                          url: photoURL,
+                          file: e.target.files[0],
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  onPress={onClose}
+                  className="admin-close-btn"
+                  radius="sm"
+                >
+                  Close
+                </Button>
+
+                <Button
+                  onPress={() => {
+                    if (currentPhoto) {
+                      handleUpdatePhoto(
+                        currentPhoto.groupId,
+                        currentPhoto.file
+                      );
+                    }
+                  }}
+                  className="admin-update-btn"
+                  radius="sm"
+                >
+                  Update
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };
 
-export default ManageCategory;
+export default ManageSubcategory;

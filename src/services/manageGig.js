@@ -57,6 +57,9 @@ export const manageGigServ = {
 
     return http.get(`/chi-tiet-loai-cong-viec/phan-trang-tim-kiem?${apiParam}`);
   },
+  getGigSubcatogry: () => {
+    return http.get(`/chi-tiet-loai-cong-viec`);
+  },
   deleteGigCategory: (gigId) => {
     return http_access.delete(`/loai-cong-viec/${gigId}`);
   },
@@ -73,9 +76,27 @@ export const manageGigServ = {
     return http_access.put(`/chi-tiet-loai-cong-viec/${gigId}`, body);
   },
   addGigSubcategory: (body) => {
-    return http_access.post(`/loai-cong-viec`, body);
+    return http_access.post(`/chi-tiet-loai-cong-viec`, body);
   },
   getMenuItems: () => {
     return http.get(`/cong-viec/lay-menu-loai-cong-viec`);
+  },
+  addGigSubcategoryGroup: (body) => {
+    return http_access.post(
+      `/chi-tiet-loai-cong-viec/them-nhom-chi-tiet-loai`,
+      body
+    );
+  },
+  updateGigSubcategoryGroup: (groupId, body) => {
+    return http.put(
+      `/chi-tiet-loai-cong-viec/sua-nhom-chi-tiet-loai/${groupId}`,
+      body
+    );
+  },
+  updateGigSubcategoryGroupPhoto: (groupId, body) => {
+    return http_access.post(
+      `chi-tiet-loai-cong-viec/upload-hinh-nhom-loai-cong-viec/${groupId}`,
+      body
+    );
   },
 };

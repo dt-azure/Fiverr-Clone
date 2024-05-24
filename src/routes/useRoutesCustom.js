@@ -12,6 +12,8 @@ import ManageUsers from "../pages/Admin/ManageUsers";
 import ManageOrder from "../pages/Admin/ManageOrder";
 import ManageCategory from "../pages/Admin/ManageCategory";
 import ManageComment from "../pages/Admin/ManageComment";
+import ManageSubcategory from "../pages/Admin/ManageSubcategory";
+
 
 const useRoutesCustom = () => {
   const routes = useRoutes([
@@ -63,6 +65,10 @@ const useRoutesCustom = () => {
         {
           path: "subcategories",
           element: <ManageGigSubcategory />,
+        },
+        {
+          path: "subcategory",
+          element: <ManageSubcategory />,
         },
         {
           path: "comment",
