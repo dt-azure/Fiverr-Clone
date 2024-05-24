@@ -111,7 +111,7 @@ const AddUserForm = ({
             } else {
               setDateErr({ status: false, message: "" });
             }
-            console.log(dateErr);
+            // console.log(dateErr);
             setFieldValue("birthday", value);
           }}
           //   className="max-w-xs"

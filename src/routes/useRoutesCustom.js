@@ -6,13 +6,12 @@ import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
 import Admin from "../pages/Admin/Admin";
 import ManageGigs from "../pages/Admin/ManageGigs";
-import ManageHiredGigs from "../pages/Admin/ManageHiredGigs";
-import ManageGigCategory from "../pages/Admin/ManageGigCategory";
 import ManageGigSubcategory from "../pages/Admin/ManageGigSubcategory";
-import ManageComments from "../pages/Admin/ManageComments";
 import JobList from "../pages/JobList/JobList";
 import ManageUsers from "../pages/Admin/ManageUsers";
-
+import ManageOrder from "../pages/Admin/ManageOrder";
+import ManageCategory from "../pages/Admin/ManageCategory";
+import ManageComment from "../pages/Admin/ManageComment";
 
 const useRoutesCustom = () => {
   const routes = useRoutes([
@@ -43,7 +42,8 @@ const useRoutesCustom = () => {
     {
       path: "/admin",
       element: <Admin />,
-      children: [,
+      children: [
+        ,
         {
           path: "users",
           element: <ManageUsers />,
@@ -54,19 +54,19 @@ const useRoutesCustom = () => {
         },
         {
           path: "order",
-          element: <ManageHiredGigs />,
+          element: <ManageOrder />,
         },
         {
-          path: "categories",
-          element: <ManageGigCategory />,
+          path: "category",
+          element: <ManageCategory />,
         },
         {
           path: "subcategories",
           element: <ManageGigSubcategory />,
         },
         {
-          path: "comments",
-          element: <ManageComments />,
+          path: "comment",
+          element: <ManageComment />,
         },
       ],
     },

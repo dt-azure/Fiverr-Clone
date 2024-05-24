@@ -1,10 +1,5 @@
-import Search from "antd/es/input/Search";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { manageGigServ } from "../../services/manageGig";
-
-import { notifyErr, notifyErrBasic, notifySuccess } from "../../utils/util";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import {
   Table,
   TableHeader,
@@ -29,19 +24,27 @@ import {
   ModalBody,
   ModalFooter,
 } from "@nextui-org/react";
+import {
+  formatDate,
+  notifyErr,
+  notifyErrBasic,
+  notifySuccess,
+} from "../../utils/util";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import dayjs from "dayjs";
 import { VerticalDotsIcon } from "../../components/Icons/VerticalDotsIcon";
 import { useSearchParams } from "react-router-dom";
 import useSWR from "swr";
-import AddGigForm from "./AddGigForm";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import AddOrderForm from "./AddOrderForm";
+import Search from "antd/es/input/Search";
+import AddCategoryForm from "./AddCategoryForm";
 
-const ManageGigs = () => {
+const ManageCategory = () => {
   const searchRef = useRef();
-  const [selectedGig, setSelectedGig] = useState({});
-  const [currentAvatar, setCurrentAvatar] = useState("");
   const [totalCount, setTotalCount] = useState(0);
-  // const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const formModal = useDisclosure();
-  const avatarModal = useDisclosure();
   const [isSubmit, setIsSubmit] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [pageSize, setPageSize] = useState(10);
@@ -49,7 +52,7 @@ const ManageGigs = () => {
 
   const fetcher = ([pageIndex, pageSize, keyword]) =>
     manageGigServ
-      .getGigDataWithPagination(pageIndex, pageSize, keyword)
+      .getGigCategoryWithPagination(pageIndex, pageSize, keyword)
       .then((res) => {
         // console.log(res);
         setTotalCount(res.data.content.totalRow);
@@ -86,72 +89,49 @@ const ManageGigs = () => {
     setFieldValue,
     handleReset,
     resetForm,
-    setErrors,
   } = useFormik({
     initialValues: {
-      nguoiTao: "",
-      tenCongViec: "",
-      giaTien: "",
-      moTa: "",
-      moTaNgan: "",
-      saoCongViec: "",
-      danhGia: "",
+      category: "",
     },
     onSubmit: async () => {
       if (isSubmit) {
         try {
-          let newGig = { ...values, hinhAnh: "" };
-          await manageGigServ.addGig(newGig);
-          notifySuccess("Gig added successfully.");
+          await manageGigServ.addGigCategory({
+            tenLoaiCongViec: values.category,
+          });
           mutate([...data]);
+          notifySuccess("Category added successfully.");
         } catch (err) {
+          // console.log(err);
           notifyErrBasic();
         }
       } else {
         try {
-          await manageGigServ.updateGig(selectedGig.id, {
-            ...values,
-            id: selectedGig.id,
+          console.log(values);
+          await manageGigServ.updateGigCategory(values.id, {
+            id: values.id,
+            tenLoaiCongViec: values.category,
           });
-          notifySuccess("Gig updated successfully.");
           mutate([...data]);
+          notifySuccess("Category updated successfully.");
         } catch (err) {
+          // console.log(err);
           notifyErrBasic();
         }
       }
     },
     validationSchema: Yup.object({
-      nguoiTao: Yup.number()
-        .typeError("Invalid ID.")
-        .required("Field is required."),
-      tenCongViec: Yup.string().required("Field is required"),
-      moTa: Yup.string().required("Field is required"),
-      moTaNgan: Yup.string().required("Field is required"),
-      giaTien: Yup.number()
-        .typeError("Invalid number.")
-        .required("Field is required."),
-      saoCongViec: Yup.number()
-        .typeError("Rating must be a number between 0 and 5.")
-        .required("Field is required.")
-        .min(0, "Rating must be from 0 to 5.")
-        .max(5, "Rating must be from 0 to 5."),
-      danhGia: Yup.number()
-        .typeError("Invalid number.")
-        .required("Field is required."),
+      category: Yup.string().required("Field is required"),
     }),
   });
 
-  const handleUpdateAvatar = async (gigId, avatar) => {
-    let formData = new FormData();
-
-    formData.append("formFile", avatar);
-    console.log(formData);
+  const handleDeleteCategory = async (cateId) => {
     try {
-      await manageGigServ.updateGigPhoto(gigId, formData);
+      await manageGigServ.deleteGigCategory(cateId);
       mutate([...data]);
-      notifySuccess("Avatar updateds successfully.");
+
+      notifySuccess("Category deleted successfully.");
     } catch (err) {
-      console.log(err);
       notifyErrBasic();
     }
   };
@@ -171,17 +151,6 @@ const ManageGigs = () => {
     }
   };
 
-  const handleDeleteGig = (gigId) => {
-    try {
-      manageGigServ.deleteGig(gigId);
-      notifySuccess("Gig removed successfully.");
-      mutate([...data]);
-    } catch (err) {
-      console.log(err);
-      notifyErrBasic();
-    }
-  };
-
   useEffect(() => {
     // Reset form when modal is closed
     if (!formModal.isOpen) {
@@ -189,11 +158,7 @@ const ManageGigs = () => {
 
       resetForm();
     }
-
-    if (!avatarModal.isOpen) {
-      setCurrentAvatar({});
-    }
-  }, [formModal.isOpen, avatarModal.isOpen]);
+  }, [formModal.isOpen]);
 
   useEffect(() => {
     if (parseInt(searchParams.get("page")) > 1) {
@@ -204,19 +169,20 @@ const ManageGigs = () => {
   return (
     <>
       <div className="flex items-center justify-between admin-dashboad-header">
-        <h2 className="dashboard-title">Gig List</h2>
+        <h2 className="dashboard-title">Category List</h2>
         <Button
           onPress={formModal.onOpen}
           className="admin-add-btn"
           radius="sm"
         >
-          Add Gig
+          Add Category
         </Button>
       </div>
+
       <div className="search-box">
         <Search
           className="admin-search"
-          placeholder="Search by gig name"
+          placeholder="Search by category"
           allowClear
           onSearch={onSearch}
           onChange={onSearchChange}
@@ -225,17 +191,18 @@ const ManageGigs = () => {
       </div>
 
       <Table
-        className="admin-table"
+        className="admin-table category-table"
         classNames={{ tr: "admin-table-row" }}
-        aria-label="User Table"
+        aria-label="Order Table"
         bottomContent={
           pages > 0 ? (
-            <div className="flex w-full justify-center">
+            <div className="flex w-full justify-center admin-pagination">
               <Pagination
                 isCompact
                 showControls
                 showShadow
                 color="primary"
+                initialPage={page}
                 page={page}
                 total={pages}
                 onChange={(page) => {
@@ -244,6 +211,12 @@ const ManageGigs = () => {
                     query: searchParams.get("query"),
                   });
                   setPage(page);
+
+                  setTimeout(() => {
+                    document
+                      .querySelector(".admin-pagination")
+                      .scrollIntoView({ behavior: "smooth" });
+                  }, 200);
                 }}
               />
             </div>
@@ -252,9 +225,7 @@ const ManageGigs = () => {
       >
         <TableHeader>
           <TableColumn key="id">ID</TableColumn>
-          <TableColumn key="name">Gig Name</TableColumn>
-          <TableColumn key="email">Seller ID</TableColumn>
-          <TableColumn key="phone">Price</TableColumn>
+          <TableColumn key="name">Category</TableColumn>
           <TableColumn key="action">Action</TableColumn>
         </TableHeader>
         <TableBody
@@ -265,9 +236,7 @@ const ManageGigs = () => {
           {(item) => (
             <TableRow key={item?.id}>
               <TableCell>{item.id}</TableCell>
-              <TableCell>{item.tenCongViec}</TableCell>
-              <TableCell>{item.nguoiTao}</TableCell>
-              <TableCell>{item.giaTien}</TableCell>
+              <TableCell>{item.tenLoaiCongViec}</TableCell>
               <TableCell>
                 <div className="relative flex justify-end items-center gap-2">
                   <Dropdown>
@@ -285,16 +254,11 @@ const ManageGigs = () => {
                     <DropdownMenu>
                       <DropdownItem
                         onClick={() => {
-                          setSelectedGig(item);
                           setIsSubmit(false);
+
                           setValues({
-                            nguoiTao: item.nguoiTao,
-                            tenCongViec: item.tenCongViec,
-                            giaTien: item.giaTien,
-                            moTa: item.moTa,
-                            moTaNgan: item.moTaNgan,
-                            saoCongViec: item.saoCongViec,
-                            danhGia: item.danhGia,
+                            id: item.id,
+                            category: item.tenLoaiCongViec,
                           });
 
                           formModal.onOpen();
@@ -307,21 +271,16 @@ const ManageGigs = () => {
                       <DropdownItem
                         className="admin-avatar-btn"
                         onClick={() => {
-                          setCurrentAvatar({
-                            gigId: item.id,
-                            url: item.hinhAnh,
-                            file: null,
-                          });
-                          avatarModal.onOpen();
+                          // photoModal.onOpen();
                         }}
                       >
-                        Change Gig Photo
+                        Change Category Photo
                       </DropdownItem>
 
                       <DropdownItem
                         className="admin-delete-btn"
                         onClick={() => {
-                          handleDeleteGig(item.id);
+                          handleDeleteCategory(item.id);
                         }}
                       >
                         Delete
@@ -345,13 +304,12 @@ const ManageGigs = () => {
           {(onClose) => (
             <>
               {isSubmit ? (
-                <ModalHeader>Add Gig</ModalHeader>
+                <ModalHeader>Add Category</ModalHeader>
               ) : (
-                <ModalHeader>Update Gig</ModalHeader>
+                <ModalHeader>Update Category</ModalHeader>
               )}
               <ModalBody>
-                <AddGigForm
-                  data={selectedGig}
+                <AddCategoryForm
                   isSubmit={isSubmit}
                   values={values}
                   errors={errors}
@@ -364,7 +322,7 @@ const ManageGigs = () => {
               </ModalBody>
               <ModalFooter>
                 <Button
-                  onPress={onClose}
+                  onPress={formModal.onClose}
                   className="admin-close-btn"
                   radius="sm"
                 >
@@ -388,76 +346,8 @@ const ManageGigs = () => {
           )}
         </ModalContent>
       </Modal>
-
-      {/* Avatar Modal */}
-      <Modal
-        isOpen={avatarModal.isOpen}
-        onOpenChange={avatarModal.onOpenChange}
-        className="admin-modal"
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader>Update Gig Photo</ModalHeader>
-              <ModalBody>
-                <div className="modal-item items-center">
-                  <div className="avatar-input flex items-center justify-center">
-                    {currentAvatar.url == "" ? (
-                      <div className="placeholder-avatar"></div>
-                    ) : (
-                      <img src={currentAvatar.url}></img>
-                    )}
-                  </div>
-                  <div className="input-wrapper flex-1 flex justify-center">
-                    <input
-                      id="avatar-input"
-                      type="file"
-                      accept=".jpg,.jpeg,.png,.webp"
-                      onChange={(e) => {
-                        let avatarURL =
-                          e.target.files.length != 0
-                            ? URL.createObjectURL(e.target.files[0])
-                            : "";
-                        setCurrentAvatar({
-                          gigId: currentAvatar.gigId,
-                          url: avatarURL,
-                          file: e.target.files[0],
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  onPress={onClose}
-                  className="admin-close-btn"
-                  radius="sm"
-                >
-                  Close
-                </Button>
-
-                <Button
-                  onPress={() => {
-                    if (currentAvatar) {
-                      handleUpdateAvatar(
-                        currentAvatar.gigId,
-                        currentAvatar.file
-                      );
-                    }
-                  }}
-                  className="admin-update-btn"
-                  radius="sm"
-                >
-                  Update
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
     </>
   );
 };
 
-export default ManageGigs;
+export default ManageCategory;

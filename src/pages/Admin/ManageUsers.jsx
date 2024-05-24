@@ -45,7 +45,6 @@ const ManageUsers = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [pageSize, setPageSize] = useState(10);
   const searchRef = useRef();
-  const [searchKeyword, setSearchKeyword] = useState("");
   const [totalCount, setTotalCount] = useState(0);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedUser, setSelectedUser] = useState({});
@@ -84,10 +83,11 @@ const ManageUsers = () => {
             ...values,
             birthday: values.birthday.toString(),
           });
+          setSearchParams(searchParams);
           notifySuccess("User added successfully.");
+          mutate([...data]);
         } catch (err) {
           notifyErr("An error has occurred.");
-          console.log(err);
         }
       } else {
         try {
@@ -105,6 +105,7 @@ const ManageUsers = () => {
           await manageUserServ.updateUserInfo(selectedUser.id, newFormData);
           setSearchParams(searchParams);
           notifySuccess("User info updated successfully.");
+          mutate([...data]);
         } catch (err) {
           notifyErr("An error has occurred.");
           console.log(err);
@@ -139,7 +140,7 @@ const ManageUsers = () => {
     manageUserServ
       .getUserDataWithPagination(pageIndex, pageSize, keyword)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setTotalCount(res.data.content.totalRow);
 
         return res.data.content.data;
@@ -165,47 +166,16 @@ const ManageUsers = () => {
 
   // Take items from skills/cert list and format them into 1 str
   const formatStr = (list) => {
+    if (!list) {
+      return;
+    }
+
     let result = "";
     list.map((item) => {
       result += item + ", ";
     });
     return result.slice(0, -2);
   };
-
-  // const handleGetUserData = async (
-  //   pageIndex = "",
-  //   pageSize = "",
-  //   keyword = ""
-  // ) => {
-  //   try {
-  //     setTableLoading(true);
-  //     const users = await manageUserServ.getUserDataWithPagination(
-  //       pageIndex,
-  //       pageSize,
-  //       keyword
-  //     );
-
-  //     let newUserList = [];
-  //     await users.data.content.data.map((item) => {
-  //       let newRow = generateRow(item);
-  //       newUserList.push(newRow);
-  //     });
-
-  //     setUserList(newUserList);
-  //     setTableParams({
-  //       ...tableParams,
-  //       pagination: {
-  //         // current: 1,
-  //         // pageSize: 10,
-  //         total: users.data.content.totalRow,
-  //       },
-  //     });
-  //     setTableLoading(false);
-  //   } catch (err) {
-  //     notifyErr("An error has occurred.");
-  //     setTableLoading(false);
-  //   }
-  // };
 
   // Handle API call with search keyword when search button is pressed
   const onSearch = (value, _e, info) => {
@@ -234,26 +204,6 @@ const ManageUsers = () => {
     }
   };
 
-  // Pass selected user's info to store then redirect to manage user page when update button is pressed
-  // const handleEditUserClick = async (user) => {
-  //   dispatch(handleSelectUser(user));
-  //   dispatch(handleEnableUpdateBtn());
-  //   navigate(`../manage-user/${user.id}`);
-  // };
-
-  useEffect(() => {
-    // handleGetUserData("1", "10");
-
-    return () => {
-      setSearchKeyword("");
-    };
-  }, []);
-
-  useEffect(() => {
-    // setUserList([]);
-    // handleGetUserData("1", "10", searchKeyword);
-  }, [searchKeyword]);
-
   useEffect(() => {
     // Reset form when modal is closed
     if (!isOpen) {
@@ -262,9 +212,15 @@ const ManageUsers = () => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (parseInt(searchParams.get("page")) > 1) {
+      setSearchParams({ query: searchParams.get("query"), page: "1" });
+    }
+  }, []);
+
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between admin-dashboad-header">
         <h2 className="dashboard-title">User List</h2>
         <Button onPress={onOpen} className="admin-add-btn" radius="sm">
           Add User
@@ -287,7 +243,7 @@ const ManageUsers = () => {
         aria-label="User Table"
         bottomContent={
           pages > 0 ? (
-            <div className="flex w-full justify-center">
+            <div className="flex w-full justify-center admin-pagination">
               <Pagination
                 isCompact
                 showControls
@@ -301,6 +257,12 @@ const ManageUsers = () => {
                     query: searchParams.get("query"),
                   });
                   setPage(page);
+
+                  setTimeout(() => {
+                    document
+                      .querySelector(".admin-pagination")
+                      .scrollIntoView({ behavior: "smooth" });
+                  }, 200);
                 }}
               />
             </div>
@@ -331,7 +293,15 @@ const ManageUsers = () => {
               <TableCell>{item.email}</TableCell>
               <TableCell>{item.phone}</TableCell>
               <TableCell>{formatDate(item.birthday)}</TableCell>
-              <TableCell>Avatar</TableCell>
+              <TableCell>
+                <div className="dashboard-avatar flex items-center justify-center">
+                  {item.avatar == "" ? (
+                    <div className="placeholder-avatar"></div>
+                  ) : (
+                    <img src={item.avatar}></img>
+                  )}
+                </div>
+              </TableCell>
               <TableCell>{item.gender ? "Male" : "Female"}</TableCell>
               <TableCell>{item.role}</TableCell>
               <TableCell className="flex items-center justify-center">
@@ -344,7 +314,7 @@ const ManageUsers = () => {
                       disableAnimation={true}
                       disableRipple={true}
                     >
-                      <i class="fa-solid fa-caret-down"></i>
+                      <i className="fa-solid fa-caret-down"></i>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent>
@@ -390,7 +360,7 @@ const ManageUsers = () => {
                             skill: item.skill,
                             certification: item.certification,
                           });
-                          console.log(values);
+
                           onOpen();
                         }}
                         className="admin-edit-btn"
@@ -422,7 +392,11 @@ const ManageUsers = () => {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader>Add User</ModalHeader>
+              {isSubmit ? (
+                <ModalHeader>Add User</ModalHeader>
+              ) : (
+                <ModalHeader>Update User</ModalHeader>
+              )}
               <ModalBody>
                 <AddUserForm
                   user={selectedUser}

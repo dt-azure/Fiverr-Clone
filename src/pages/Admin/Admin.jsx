@@ -33,7 +33,9 @@ const Admin = () => {
         {
           key: "11",
           icon: <UserOutlined />,
-          label: <NavLink to="/admin/users?query=all&page=1">Manage User</NavLink>,
+          label: (
+            <NavLink to="/admin/users?query=all&page=1">Manage User</NavLink>
+          ),
         },
       ],
     },
@@ -45,22 +47,21 @@ const Admin = () => {
         {
           key: "21",
           icon: <UserOutlined />,
-          label: <NavLink to="/admin/gigs">Manage Gig</NavLink>,
+          label: (
+            <NavLink to="/admin/gigs?query=all&page=1">Manage Gig</NavLink>
+          ),
         },
-        // {
-        //   key: "4",
-        //   icon: <UserOutlined />,
-        //   label: <NavLink to="/admin/users">Manage Gig</NavLink>,
-        // },
         {
           key: "22",
           icon: <UserOutlined />,
-          label: <NavLink to="/admin/order">Manage Order</NavLink>,
+          label: (
+            <NavLink to="/admin/order?query=all&page=1">Manage Order</NavLink>
+          ),
         },
         {
           key: "23",
           icon: <UserOutlined />,
-          label: <NavLink to="/admin/categories">Manage Category</NavLink>,
+          label: <NavLink to="/admin/category?query=all&page=1">Manage Category</NavLink>,
         },
         {
           key: "24",
@@ -69,11 +70,6 @@ const Admin = () => {
             <NavLink to="/admin/subcategories">Manage Subcategory</NavLink>
           ),
         },
-        // {
-        //   key: "8",
-        //   icon: <UserOutlined />,
-        //   label: <NavLink to="/admin/users">Add Category</NavLink>,
-        // },
       ],
     },
     {
@@ -84,7 +80,7 @@ const Admin = () => {
         {
           key: "31",
           icon: <UserOutlined />,
-          label: <NavLink to="/admin/comments">Manage Comments</NavLink>,
+          label: <NavLink to="/admin/comment">Manage Comments</NavLink>,
         },
       ],
     },
@@ -131,9 +127,14 @@ const Admin = () => {
 
   useEffect(() => {
     if (!userLocal || userLocal.data.content.user.role !== "ADMIN") {
-      navigate("/")
+      navigate("/");
+    } else if (
+      window.location.pathname == "/admin" ||
+      window.location.pathname == "/admin/"
+    ) {
+      navigate("/admin/users?query=all&page=1");
     }
-  }, [])
+  }, []);
 
   if (userLocal && userLocal.data.content.user.role === "ADMIN") {
     return (
@@ -143,7 +144,7 @@ const Admin = () => {
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={["12"]}
+            defaultSelectedKeys={["11"]}
             items={items}
             openKeys={stateOpenKeys}
             onOpenChange={onOpenChange}
@@ -193,6 +194,6 @@ const Admin = () => {
       </Layout>
     );
   }
-  return <Loading className="full-screen"/>;
+  return <Loading className="full-screen" />;
 };
 export default Admin;
