@@ -1,5 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import logo1 from "../../assets/nav_bar_icon_hire_1.svg";
 import logo2 from "../../assets/nav_bar_icon_hire_2.svg";
+
+
 
 export const headerText = {
   fiverrPro: {
@@ -46,51 +49,69 @@ export const fiverrProText = (
 export const exploreText = (
   <ul>
     <li className="py-2 px-8 hover:bg-slate-100 hover:cursor-pointer">
-      <a className="flex flex-col" href="#">
+      <a
+        className="flex flex-col"
+        href="/gigs?query=all&page=1"
+
+      >
         <span className="font-semibold text-dark">Discover</span>
-        <span className="font-semibold text-gray-500">Inspiring projects made on Fiverr</span>
+        <span className="font-semibold text-gray-500">
+          Inspiring projects made on Fiverr
+        </span>
       </a>
     </li>
 
     <li className="py-2 px-8 hover:bg-slate-100 hover:cursor-pointer">
       <a className="flex flex-col" href="#">
         <span className="font-semibold text-dark">Community</span>
-        <span className="font-semibold text-gray-500">Connect with Fiverr's team and community</span>
+        <span className="font-semibold text-gray-500">
+          Connect with Fiverr's team and community
+        </span>
       </a>
     </li>
 
     <li className="py-2 px-8 hover:bg-slate-100 hover:cursor-pointer">
       <a className="flex flex-col" href="#">
         <span className="font-semibold text-dark">Guides</span>
-        <span className="font-semibold text-gray-500">In-depth guides covering business topics</span>
+        <span className="font-semibold text-gray-500">
+          In-depth guides covering business topics
+        </span>
       </a>
     </li>
 
     <li className="py-2 px-8 hover:bg-slate-100 hover:cursor-pointer">
       <a className="flex flex-col" href="#">
         <span className="font-semibold text-dark">Podcast</span>
-        <span className="font-semibold text-gray-500">Inside tips from top business minds</span>
+        <span className="font-semibold text-gray-500">
+          Inside tips from top business minds
+        </span>
       </a>
     </li>
 
     <li className="py-2 px-8 hover:bg-slate-100 hover:cursor-pointer">
       <a className="flex flex-col" href="#">
         <span className="font-semibold text-dark">Learn</span>
-        <span className="font-semibold text-gray-500">Professional online courses, led by experts</span>
+        <span className="font-semibold text-gray-500">
+          Professional online courses, led by experts
+        </span>
       </a>
     </li>
 
     <li className="py-2 px-8 hover:bg-slate-100 hover:cursor-pointer">
       <a className="flex flex-col" href="#">
         <span className="font-semibold text-dark">Blog</span>
-        <span className="font-semibold text-gray-500">News, information and community stories</span>
+        <span className="font-semibold text-gray-500">
+          News, information and community stories
+        </span>
       </a>
     </li>
 
     <li className="py-2 px-8 hover:bg-slate-100 hover:cursor-pointer">
       <a className="flex flex-col" href="#">
         <span className="font-semibold text-dark">Logo Maker</span>
-        <span className="font-semibold text-gray-500">Create your logo instantly</span>
+        <span className="font-semibold text-gray-500">
+          Create your logo instantly
+        </span>
       </a>
     </li>
   </ul>
