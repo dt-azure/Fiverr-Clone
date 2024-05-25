@@ -26,7 +26,78 @@ const HomeBanner = () => {
             <div className="model-tag flex items-center absolute">
               <div className="avatar mr-5">
                 <img
+                  src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_40,dpr_1.0/v1/attachments/generic_asset/asset/7539ee9d7a6ab02e3d23069ebefb32c8-1690386499422/christina-2x.png"
+                  alt=""
+                  className="mx-auto"
+                />
+              </div>
+              <div className="model-text">
+                <div className="social flex justify-between items-center text-white">
+                  <p>Christina</p>
+                  <p>
+                    5 <i class="fa fa-star" aria-hidden="true"></i>
+                  </p>
+                </div>
+                <div className="title text-white">
+                  <p className="font-bold">Jewelry Shop Owner</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="colin h-screen relative">
+            <div className="model-tag flex items-center absolute">
+              <div className="avatar mr-5">
+                <img
+                  src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_40,dpr_1.0/v1/attachments/generic_asset/asset/7539ee9d7a6ab02e3d23069ebefb32c8-1690386499432/colin-2x.png"
+                  alt=""
+                  className="mx-auto"
+                />
+              </div>
+              <div className="model-text">
+                <div className="social flex justify-between items-center text-white">
+                  <p>Colin Stark</p>
+                  <p>
+                    5 <i class="fa fa-star" aria-hidden="true"></i>
+                  </p>
+                </div>
+                <div className="title text-white">
+                  <p className="font-bold">Creative Director</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div className="jenny h-screen relative">
+            <div className="model-tag flex items-center absolute">
+              <div className="avatar mr-5">
+                <img
                   src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_40,dpr_1.0/v1/attachments/generic_asset/asset/7539ee9d7a6ab02e3d23069ebefb32c8-1690386499430/jenny-2x.png"
+                  alt=""
+                  className="mx-auto"
+                />
+              </div>
+              <div className="model-text">
+                <div className="social flex justify-between items-center text-white">
+                  <p>@Jenny</p>
+                  <p>
+                    5 <i class="fa fa-star" aria-hidden="true"></i>
+                  </p>
+                </div>
+                <div className="title text-white">
+                  <p className="font-bold">Children's Voice Over</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div className="jordan h-screen relative">
+            <div className="model-tag flex items-center absolute">
+              <div className="avatar mr-5">
+                <img
+                  src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_40,dpr_1.0/v1/attachments/generic_asset/asset/7539ee9d7a6ab02e3d23069ebefb32c8-1690386499439/jordan-2x.png"
                   alt=""
                   className="mx-auto"
                 />
@@ -44,59 +115,27 @@ const HomeBanner = () => {
               </div>
             </div>
           </div>
-          <div className="colin h-screen relative">
-            <div className="model-tag flex">
-              <div className="avatar"></div>
-              <div className="model-text">
-                <div className="flex justify-between">
-                  <p>@jordanruncie_</p>
-                  <p>
-                    5<FontAwesomeIcon icon="fa-solid fa-star" />
-                  </p>
-                </div>
-                <div className="title"></div>
-              </div>
-            </div>
-          </div>
-          <div className="jenny h-screen relative">
-            <div className="model-tag flex">
-              <div className="avatar"></div>
-              <div className="model-text">
-                <div className="flex justify-between">
-                  <p>@jordanruncie_</p>
-                  <p>
-                    5<FontAwesomeIcon icon="fa-solid fa-star" />
-                  </p>
-                </div>
-                <div className="title"></div>
-              </div>
-            </div>
-          </div>
-          <div className="jordan h-screen relative">
-            <div className="model-tag flex">
-              <div className="avatar"></div>
-              <div className="model-text">
-                <div className="flex justify-between">
-                  <p>@jordanruncie_</p>
-                  <p>
-                    5<FontAwesomeIcon icon="fa-solid fa-star" />
-                  </p>
-                </div>
-                <div className="title"></div>
-              </div>
-            </div>
-          </div>
+
+
           <div className="scarlett h-screen relative">
-            <div className="model-tag flex">
-              <div className="avatar"></div>
+            <div className="model-tag flex items-center absolute">
+              <div className="avatar mr-5">
+                <img
+                  src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_40,dpr_1.0/v1/attachments/generic_asset/asset/7539ee9d7a6ab02e3d23069ebefb32c8-1690386499428/scarlett-2x.png"
+                  alt=""
+                  className="mx-auto"
+                />
+              </div>
               <div className="model-text">
-                <div className="flex justify-between">
-                  <p>@jordanruncie_</p>
+                <div className="social flex justify-between items-center text-white">
+                  <p>Scarlett</p>
                   <p>
-                    5<FontAwesomeIcon icon="fa-solid fa-star" />
+                    5 <i class="fa fa-star" aria-hidden="true"></i>
                   </p>
                 </div>
-                <div className="title"></div>
+                <div className="title text-white">
+                  <p className="font-bold">Business Founder</p>
+                </div>
               </div>
             </div>
           </div>
