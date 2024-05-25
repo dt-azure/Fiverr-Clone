@@ -71,7 +71,7 @@ const Admin = () => {
           key: "24",
           icon: <UnorderedListOutlined />,
           label: (
-            <NavLink to="/admin/subcategories">Manage Subcategory</NavLink>
+            <NavLink to="/admin/subcategory?query=all&page=1">Manage Subcategory</NavLink>
           ),
         },
       ],

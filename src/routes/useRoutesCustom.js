@@ -63,10 +63,6 @@ const useRoutesCustom = () => {
           element: <ManageCategory />,
         },
         {
-          path: "subcategories",
-          element: <ManageGigSubcategory />,
-        },
-        {
           path: "subcategory",
           element: <ManageSubcategory />,
         },
