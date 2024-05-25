@@ -3,11 +3,10 @@ import "./gigInfo.scss";
 import { Collapse, Rate, Tabs } from "antd";
 import BasicButton from "../../components/Button/BasicButton";
 import Comments from "./Comments";
-
+import { getLocalStorage } from "../../utils/util";
 
 const GigInfo = ({ gigDetails }) => {
-
-
+  const user = getLocalStorage("user");
 
   const tabItem = (
     <div className="package-details">
@@ -158,9 +157,7 @@ const GigInfo = ({ gigDetails }) => {
           </div>
 
           {/* <div className="comments">Text</div> */}
-          <Comments />
-
-          
+          {user ? <Comments /> : null}
         </div>
       </div>
       <div className="side-bar">
