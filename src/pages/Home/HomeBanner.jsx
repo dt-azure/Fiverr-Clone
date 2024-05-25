@@ -19,7 +19,7 @@ const HomeBanner = () => {
         <Carousel
           id="home__banner"
           dots={false}
-          autoplay={false}
+          autoplay={true}
           autoplaySpeed={5000}
         >
           <div className="christina h-screen relative">
